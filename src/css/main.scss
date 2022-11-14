@@ -20,7 +20,7 @@ body {
   border-radius: .5em;
   padding: .5em 1em;
   padding-bottom: 1.5em;
-  // margin-bottom: 10em;
+  margin-bottom: 15em;
 
   h1 {
     font-family: 'Jua', sans-serif;
@@ -48,6 +48,11 @@ body {
 .left-panel {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  // transform: translateY(25%);
+  // height: 100vh;
+  position: absolute;
+  left: 15%;
+  justify-content: space-evenly;
+  top: 50%;
+  transform: translateY(-25%);
+  padding-top: 15em;
 }

@@ -7,8 +7,10 @@ export default function App() {
   return (
     <div>
       <PanelSelection />
-      <CustomizationPanel />
-      <EmoteSelectionPanel />
+      <div className="left-panel">
+        <CustomizationPanel />
+        <EmoteSelectionPanel />
+      </div>
       <PreviewPanel />
     </div>
   );
