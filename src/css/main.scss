@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Itim&family=Jua&display=swap');
+
+:root {
+  --color-gradient-1: linear-gradient(-130deg, #5131d3, #af94db);
+  --color-gradient-2: linear-gradient(180deg, #32c8c8, #708fff);
+}
+
+body {
+  position: relative;
+  background: var(--color-gradient-1);
+  background-repeat: no-repeat;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.panel {
+  background: white;
+  border-radius: .5em;
+  padding: .5em 1em;
+  padding-bottom: 1.5em;
+  // margin-bottom: 10em;
+
+  h1 {
+    font-family: 'Jua', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.2em;
+    font-weight: 100;
+    letter-spacing: .1em;
+    background: var(--color-gradient-2);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: right;
+    margin-right: .5em;
+    margin-bottom: 1.5em;
+  }
+}
+
+.panel-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 70vw;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  // transform: translateY(25%);
+}

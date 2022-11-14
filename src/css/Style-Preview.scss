@@ -1,0 +1,53 @@
+.preview-panel {
+  width: 20em;
+  height: 30em;
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  transform: translateY(-50%);
+}
+
+.emote-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 85%;
+}
+
+.emote-container {
+  width: 80%;
+  aspect-ratio: 1/1;
+  background: rgba(0, 0, 0, .15);
+  position: relative;
+  border-radius: .5em;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.emote-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/png-background.svg');
+  z-index: -1;
+}
+
+.generated-emote {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+}
+
+.download-button {
+  height: 4em;
+  border: none;
+  border-radius: .5em;
+  width: 80%;
+  font-family: 'Jua', sans-serif;
+  background: rgba(0, 0, 0, .4);
+  color: white;
+  font-size: 1.5em;
+  padding: 0;
+  margin-bottom: .5em;
+}

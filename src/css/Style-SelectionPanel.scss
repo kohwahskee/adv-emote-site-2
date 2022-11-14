@@ -1,0 +1,36 @@
+.panel-selection {
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  left: 0%;
+
+  &.customization-selected {
+    top: 50%;
+    transform: translateY(-25%);
+  }
+
+  &.emote-selected {
+    top: -25%;
+    transform: translateY(50%);
+  }
+
+  h1 {
+    height: 30vh;
+    writing-mode: sideways-lr;
+    color: white;
+    font-family: 'Jua', sans-serif;
+    font-weight: 600;
+    letter-spacing: .1em;
+    opacity: .5;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1.5em;
+    text-align: center;
+  }
+}
+
+.selection-active {
+  opacity: 100% !important;
+}
