@@ -5,10 +5,14 @@
 
 .customization-panel {
   position: fixed;
-  top: 50%;
   left: 15%;
   width: 20em;
-  transform: translateY(-50%);
+  top: 25%;
+  // transform: translateY(-50%);
+
+  &.emote-selected {
+    top: -10%;
+  }
 }
 
 .option-container {

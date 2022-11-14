@@ -1,8 +1,12 @@
 import '../../css/Style-EmoteSelection.scss';
 
-export default function EmoteSelectionPanel() {
+interface Props {
+  currentSelection: string | null;
+}
+
+export default function EmoteSelectionPanel(props: Props) {
   return (
-    <div className="emote-selection-panel panel">
+    <div className={"emote-selection-panel panel" + (props.currentSelection === "")}>
       <h1>Emotes</h1>
     </div>
   );

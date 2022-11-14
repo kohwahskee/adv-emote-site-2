@@ -4,4 +4,8 @@
   height: 20em;
   top: 90%;
   left: 15%;
+
+  &.emote-selected {
+    top: 25%;
+  }
 }

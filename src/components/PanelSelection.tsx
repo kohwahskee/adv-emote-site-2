@@ -1,29 +1,32 @@
 import { useState, MouseEvent, useEffect } from "react";
 import '../css/Style-SelectionPanel.scss';
-export default function PanelSelection() {
 
-  const [selectionState, setSelectionState] = useState<String | null>("customization");
+interface Props {
+  currentSelection: string | null;
+  selectionOnclickHandler: (state: string | null) => void;
+}
 
-  useEffect(() => {
-    console.log(selectionState);
-  }, [selectionState]);
+export default function PanelSelection(props: Props) {
 
-  const selectionOnClickHandler = (event: MouseEvent) => {
-    setSelectionState(event.currentTarget.getAttribute("selection-value"));
+  const { currentSelection, selectionOnclickHandler } = props;
+
+
+  const selectionHandler = (event: MouseEvent) => {
+    selectionOnclickHandler(event.currentTarget.getAttribute("selection-value"));
   }
 
   return (
-    <div className={"panel-selection " + (selectionState === "customization" ? "customization-selected" : "emote-selected")}>
+    <div className={"panel-selection " + (currentSelection === "customization" ? "customization-selected" : "emote-selected")}>
       <h1
-        className={selectionState === "customization" ? "selection-active" : ""}
+        className={currentSelection === "customization" ? "selection-active" : ""}
         selection-value="customization"
-        onClick={selectionOnClickHandler}
+        onClick={selectionHandler}
       >
         CUSTOMIZATION</h1>
       <h1
-        className={selectionState === "emotes" ? "selection-active" : ""}
+        className={currentSelection === "emotes" ? "selection-active" : ""}
         selection-value="emotes"
-        onClick={selectionOnClickHandler}
+        onClick={selectionHandler}
       >
         EMOTES</h1>
     </div>
