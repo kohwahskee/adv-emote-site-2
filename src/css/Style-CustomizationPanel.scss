@@ -1,6 +1,7 @@
 :root {
-  --color-black-60: rgba(0, 0, 0, 0.6);
-  --color-black-15: rgba(0, 0, 0, 0.15);
+  --color-black-60: hsl(0, 0%, 40%);
+  --color-black-15: hsl(0, 0%, 90%);
+  --color-black-40: hsl(0, 0%, 60%);
 }
 
 .customization-panel {
@@ -8,11 +9,7 @@
   left: 15%;
   width: 20em;
   top: 25%;
-  // transform: translateY(-50%);
-
-  &.emote-selected {
-    top: -10%;
-  }
+  height: fit-content;
 }
 
 .option-container {
@@ -44,4 +41,120 @@
   width: 80%;
   height: 3.5em;
   border-radius: .5em;
+}
+
+// Text option
+#text-option {
+  font-family: 'Itim', sans-serif;
+  text-align: center;
+  color: var(--color-black-60);
+  caret-color: var(--color-black-60);
+  padding: 0 1em;
+
+
+}
+
+// Font size option
+#font-size-option {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Itim', sans-serif;
+  align-items: center;
+  text-align: center;
+  color: var(--color-black-60);
+  padding: 0 1.5em;
+
+  input {
+    width: 50%;
+  }
+
+  button {
+    cursor: pointer;
+    user-select: none;
+    font-size: 2em;
+
+    &:hover {
+      transform: scale(1.4);
+    }
+
+    &:active {
+      transform: scale(1.2);
+    }
+
+  }
+}
+
+// Font option
+#font-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Itim', sans-serif;
+  align-items: center;
+  text-align: center;
+  color: var(--color-black-60);
+  overflow: hidden;
+  cursor: pointer;
+
+  #selected-font {
+    // font-size: 1.3em;
+    position: absolute;
+    top: 0;
+    transform: translateY(85%);
+  }
+
+  .font-list {
+    padding: .5em 0;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 35%);
+    height: 10em;
+    overflow: scroll;
+    width: 100%;
+
+    .font-item {
+      font-size: .8em;
+      margin-bottom: 1em;
+      cursor: pointer;
+      color: var(--color-black-40);
+      user-select: none;
+
+      &:hover {
+        color: var(--color-black-60);
+      }
+    }
+  }
+}
+
+// Color option
+
+.color-option {
+  position: relative;
+  // overflow: hidden;
+}
+
+#color-option-box {
+  background-color: #000000;
+  cursor: pointer;
+}
+
+.color-picker-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: fit-content;
+}
+
+.sketch-picker {
+  padding: .5em .5em !important;
+  font-family: 'Itim', sans-serif;
+  border: none;
+  border-radius: .5em !important;
+  outline: none;
+  box-shadow: rgba($color: #000000, $alpha: .3) 3px 3px 15px 0px !important;
+  background-color: white !important;
+  position: absolute;
+  // display: none;
 }

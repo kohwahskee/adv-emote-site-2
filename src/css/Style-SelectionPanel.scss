@@ -4,17 +4,9 @@
   flex-direction: column;
   justify-content: center;
   position: absolute;
-  left: 0%;
-
-  &.customization-selected {
-    top: 50%;
-    transform: translateY(-25%);
-  }
-
-  &.emote-selected {
-    top: -25%;
-    transform: translateY(50%);
-  }
+  top: 50%;
+  transform: translateY(-50%);
+  left: 2%;
 
   h1 {
     height: 30vh;
@@ -23,12 +15,14 @@
     font-family: 'Jua', sans-serif;
     font-weight: 600;
     letter-spacing: .1em;
-    opacity: .5;
+    opacity: 50%;
     cursor: pointer;
     user-select: none;
     font-size: 1.5em;
     text-align: center;
+    transition: opacity .3s ease-out;
   }
+
 }
 
 .selection-active {
