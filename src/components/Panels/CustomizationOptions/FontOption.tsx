@@ -1,100 +1,103 @@
-import FontIcon from '../../../assets/icon-font.svg';
 import { animated, useSpring, AnimationProps } from '@react-spring/web';
-import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
-import { useState } from 'react';
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import FontIcon from '../../../assets/icon-font.svg';
 
-interface Props {
-  panelNode: React.RefObject<HTMLDivElement>,
-}
 interface FontItem {
-  fontName: string; fontValue: string
+  fontName: string;
+  fontValue: string;
 }
 
 const fontList: FontItem[] = [
   {
     fontName: 'Cos',
-    fontValue: 'Ari'
+    fontValue: 'Ari',
   },
   {
     fontName: 'Comic Sans',
-    fontValue: 'ComSans'
-  }
-]
+    fontValue: 'ComSans',
+  },
+];
 
 const defaultFont: FontItem = {
   fontName: 'Calibri',
-  fontValue: 'Calibri'
-}
+  fontValue: 'Calibri',
+};
 
-const animationConfig: AnimationProps["config"] = {
+const animationConfig: AnimationProps['config'] = {
   mass: 1,
   tension: 385,
   friction: 20,
-}
+};
 
-export default function FontOption(props: Props) {
-  const { panelNode } = props;
+export default function FontOption() {
   const selectedFontRef = useRef<HTMLDivElement>(null);
   const [isFocus, setIsFocus] = useState(false);
   const [selectedFont, setSelectedFont] = useState<FontItem>(defaultFont);
-  const [fontBoxAnimation, fontBoxAnimationController] = useSpring(() => { });
-
+  const [fontBoxAnimation, fontBoxAnimationController] = useSpring(() => {});
 
   const fontItemOnClickHandler = (e: MouseEvent<HTMLLIElement>) => {
     e.stopPropagation();
     setIsFocus(false);
-    setSelectedFont({ fontName: e.currentTarget.innerText, fontValue: e.currentTarget.getAttribute("font-value") as string });
-  }
+    setSelectedFont({
+      fontName: e.currentTarget.innerText,
+      fontValue: e.currentTarget.getAttribute('font-value') as string,
+    });
+  };
 
   const generateFontList = (): ReactNode[] => {
-    const fontItems: ReactNode[] = fontList.map(fontItem =>
+    const fontItems: ReactNode[] = fontList.map((fontItem) => (
       <li
+        key={fontItem.fontName}
         onClick={fontItemOnClickHandler}
         font-value={fontItem.fontValue}
-        className="font-item">{fontItem.fontName}</li>
-    );
+        className='font-item'
+      >
+        {fontItem.fontName}
+      </li>
+    ));
     return fontItems;
-  }
+  };
 
   const onClickHandler = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     setIsFocus(true);
-    const documentEventID: EventListener = (event) => {
+    const documentEventID = () => {
       setIsFocus(false);
       document.removeEventListener('click', documentEventID);
-    }
+    };
     document.addEventListener('click', documentEventID);
-  }
+  };
 
   // Animate font box every time focus changes
   useEffect(() => {
     fontBoxAnimationController.start({
-      to: { height: isFocus ? "13em" : "3.5em" },
+      to: { height: isFocus ? '13em' : '3.5em' },
       config: animationConfig,
-    })
+    });
     // console.log(isFocus);
   }, [isFocus]);
 
-
   return (
-    <div className="option-container">
-      <div className="font-option option">
-        <div className="icon-option">
-          <img src={FontIcon} alt="Font icon" />
+    <div className='option-container'>
+      <div className='font-option option'>
+        <div className='icon-option'>
+          <img src={FontIcon} alt='Font icon' />
         </div>
         <animated.div
           style={fontBoxAnimation}
           onClick={onClickHandler}
-          className="option-box"
-          id="font-option">
+          className='option-box'
+          id='font-option'
+        >
           <div
             ref={selectedFontRef}
             font-value={selectedFont.fontValue}
-            id="selected-font">{selectedFont.fontName}</div>
-          <ul className="font-list">
-            {generateFontList()}
-          </ul>
+            id='selected-font'
+          >
+            {selectedFont.fontName}
+          </div>
+          <ul className='font-list'>{generateFontList()}</ul>
         </animated.div>
       </div>
     </div>

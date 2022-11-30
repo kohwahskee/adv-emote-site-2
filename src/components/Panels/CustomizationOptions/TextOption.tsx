@@ -1,5 +1,5 @@
 import { animated, useSpring } from '@react-spring/web';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import TextIcon from '../../../assets/icon-text.svg';
 
 export default function TextOption() {

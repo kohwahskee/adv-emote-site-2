@@ -1,8 +1,7 @@
+import { SketchPicker } from 'react-color';
+import React, { MouseEvent, useEffect, useState, } from 'react';
+import { animated, AnimationProps, useSpring } from '@react-spring/web';
 import ColorIcon from '../../../assets/icon-color.svg';
-import { SketchPicker, Color } from 'react-color';
-import { useEffect, useState } from 'react';
-import { MouseEvent } from 'react';
-import { animated, AnimationProps, easings, useSpring } from '@react-spring/web';
 
 const animationConfig: AnimationProps["config"] = {
   mass: .5,
@@ -16,24 +15,22 @@ const animationConfig: AnimationProps["config"] = {
 export default function ColorOption() {
   const [color, setColor] = useState<string>('#FFDE98');
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [colorPickerAnimation, colorPickerAnimationController] = useSpring(() => {
-    return {
-      from: { scale: 1.1 }
-    }
-  });
-  const onChangeHandler = (color: any) => {
-    setColor(color.hex);
+  const [colorPickerAnimation, colorPickerAnimationController] = useSpring(() => ({
+    from: { scale: 1.1 }
+  }));
+  const onChangeHandler = (newColor: any) => {
+    setColor(newColor.hex);
   }
   const boxOnClickHandler = (e: MouseEvent) => {
     e.stopPropagation();
     setIsFocused(true);
     const colorPicker: HTMLElement | null = document.querySelector('.sketch-picker');
 
-    const colorPickerListenerId = (e: globalThis.MouseEvent) => {
+    const colorPickerListenerId = (pickerEvent: Event) => {
       // stopPropagation() prevents document listener from firing when user is still picking color
-      e.stopPropagation();
+      pickerEvent.stopPropagation();
     }
-    const documentListenerId = (e: globalThis.MouseEvent) => {
+    const documentListenerId = () => {
       setIsFocused(false);
 
       // Remove listeners when no longer focused
@@ -68,7 +65,7 @@ export default function ColorOption() {
           <SketchPicker
             styles={{ default: { picker: { display: isFocused ? 'unset' : 'none' } } }}
             width='10em'
-            disableAlpha={true}
+            disableAlpha
             presetColors={[]}
             color={color}
             onChange={onChangeHandler}
@@ -77,8 +74,7 @@ export default function ColorOption() {
         <div
           style={{ backgroundColor: color }}
           onClick={boxOnClickHandler}
-          className="option-box" id="color-option-box">
-        </div>
+          className="option-box" id="color-option-box" />
       </div>
     </div>
   );
