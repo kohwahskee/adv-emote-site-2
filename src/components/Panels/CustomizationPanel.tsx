@@ -15,11 +15,11 @@ interface Props {
   currentSelection: string | null,
 }
 export default function CustomizationPanel(props: Props) {
+  const { currentSelection } = props;
   const panelRef = useRef<HTMLDivElement>(null);
-
   const whenEmoteSelected = {
-    to: { top: props.currentSelection === "emotes" ? "-35%" : "25%" },
-    delay: props.currentSelection === "emotes" ? 0 : 50,
+    to: { top: currentSelection === "emotes" ? "-35%" : "25%" },
+    delay: currentSelection === "emotes" ? 0 : 50,
     config: animationConfig
   }
   const [panelAnimation, panelAnimationController] = useSpring(() => { });
@@ -30,7 +30,7 @@ export default function CustomizationPanel(props: Props) {
       ...whenEmoteSelected,
       config: animationConfig
     });
-  }, [props.currentSelection])
+  }, [currentSelection])
 
   return (
     <animated.div

@@ -2,20 +2,23 @@ import ColorIcon from '../../../assets/icon-color.svg';
 import { SketchPicker, Color } from 'react-color';
 import { useEffect, useState } from 'react';
 import { MouseEvent } from 'react';
-import { animated, AnimationProps, useSpring } from '@react-spring/web';
+import { animated, AnimationProps, easings, useSpring } from '@react-spring/web';
 
 const animationConfig: AnimationProps["config"] = {
-  mass: 1,
-  tension: 705,
-  friction: 20,
+  mass: .5,
+  tension: 305,
+  friction: 10,
+  // easing: easings.easeOutCubic,
+  // duration: 250,
+
 }
 
 export default function ColorOption() {
-  const [color, setColor] = useState('#FFDE98');
+  const [color, setColor] = useState<string>('#FFDE98');
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [colorPickerAnimation, colorPickerAnimationController] = useSpring(() => {
     return {
-      from: { scale: 1 }
+      from: { scale: 1.1 }
     }
   });
   const onChangeHandler = (color: any) => {
@@ -46,7 +49,7 @@ export default function ColorOption() {
     if (isFocused) {
       console.log('focused'); // This works
       colorPickerAnimationController.start({ // This is reached
-        to: [{ scale: 1.2 }, { scale: 1 }],
+        to: [{ scale: 1.1 }, { scale: 1 }],
         config: animationConfig,
         reset: true
       });

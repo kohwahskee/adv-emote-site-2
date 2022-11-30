@@ -9,6 +9,7 @@ export default function TextOption() {
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setInputText(event.target.value);
   }
+
   const animationConfig = {
     config: {
       mass: 1,
@@ -16,6 +17,7 @@ export default function TextOption() {
       friction: 20
     }
   }
+
   useEffect(() => {
     textBoxAnimationController.start({
       from: { scale: isFocus ? 1 : 2 },

@@ -17,6 +17,8 @@ export default function FontSizeOption() {
   }
   const [inputAnimation, inputAnimationController] = useSpring(() => { });
   const [buttonAnimation, buttonAnimationController] = useSpring(() => { });
+
+
   const buttonOnClickHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (event.currentTarget.getAttribute("data-action") === "increase") {
@@ -33,6 +35,7 @@ export default function FontSizeOption() {
       });
     }
   }
+
 
   useEffect(() => {
     inputAnimationController.start({
@@ -65,4 +68,8 @@ export default function FontSizeOption() {
       </div>
     </div>
   );
+}
+
+function useStartInputAnimation() {
+
 }
