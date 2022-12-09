@@ -1,53 +1,38 @@
-import { useEffect, useRef } from 'react';
-import * as EmoteModifier from './EmoteModifiers';
+import React, { useEffect, useRef } from 'react';
+/**
+ * Includes functions to modify emote in Photopea
+ * @module EmoteModifier
+ */
+import * as EmoteAction from './EmoteAction';
 import * as EmoteAssets from './EmoteAssets';
 
-// 4 messages are sent when Photopea finishes loading psd and fonts
-const READY_COUNT_ON_LOAD = 4;
 // Delay for debounce function
 const UPDATE_DELAY_IN_MS = 2000;
 
-// Initialize Photopea (load psd and fonts)
-function photopeaInit(photopeaNode: HTMLIFrameElement, fileURL: string, fontURL?: string) {
-	let messageCount = 0;
-	const photopea = photopeaNode;
-	const photopeaWindow = photopea.contentWindow;
-	const loadFont = `app.open("${fontURL}")`;
-	const loadImage = `app.open("${fileURL}", false)`;
-
-	window.addEventListener('message', (e) => {
-		if (e.origin === 'https://www.photopea.com') {
-			messageCount++;
-			if (messageCount === READY_COUNT_ON_LOAD) {
-				// When finishes loading psd and fonts, change font to BPdots
-				EmoteModifier.changeFont(photopeaWindow, 'user', 'BPdots');
-			}
-			console.log(`Message from Photopea: ${e.data}`);
-			console.log(messageCount);
-		}
-	});
-
-	if (photopeaWindow) {
-		photopeaWindow.postMessage(loadFont, '*');
-		photopeaWindow.postMessage(loadImage, '*');
-	}
-}
-
 interface Props {
 	emoteModifiers: EmoteAssets.EmoteModifiers;
+	setEmotePreviewURL: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function Photopea({ emoteModifiers }: Props) {
+export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) {
 	const photopeaRef = useRef<HTMLIFrameElement>(null);
 	const oldEmoteModifiers = useRef<EmoteAssets.EmoteModifiers>(emoteModifiers);
 
 	// Debounce updateEmote function to prevent request spamming (2 seconds delay);
 	useEffect(() => {
 		const debouncer = setTimeout(() => {
-			EmoteModifier.updateEmote(
+			console.log('updated');
+			EmoteAction.updateEmote(
 				oldEmoteModifiers.current,
 				emoteModifiers,
 				photopeaRef.current?.contentWindow as Window
+			);
+			EmoteAction.getEmoteURL(
+				photopeaRef.current as HTMLIFrameElement,
+				'png',
+				'lurk',
+				emoteModifiers.text,
+				setEmotePreviewURL
 			);
 			oldEmoteModifiers.current = emoteModifiers;
 		}, UPDATE_DELAY_IN_MS);
@@ -60,7 +45,7 @@ export default function Photopea({ emoteModifiers }: Props) {
 	return (
 		<iframe
 			onLoad={() => {
-				photopeaInit(
+				EmoteAction.photopeaInit(
 					photopeaRef.current as HTMLIFrameElement,
 					EmoteAssets.lurkLink,
 					EmoteAssets.comiciLink

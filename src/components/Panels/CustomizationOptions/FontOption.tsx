@@ -1,11 +1,5 @@
 import { animated, useSpring, AnimationProps } from '@react-spring/web';
-import React, {
-	MouseEvent,
-	ReactNode,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import React, { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import FontIcon from '../../../assets/icon-font.svg';
 import { EmoteModifiers } from '../../EmoteAssets';
 
@@ -40,28 +34,21 @@ const animationConfig: AnimationProps['config'] = {
 };
 
 interface Props {
-	setEmoteModifiers: React.Dispatch<
-		React.SetStateAction<EmoteModifiers>
-	>;
+	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
 }
 
 export default function FontOption({ setEmoteModifiers }: Props) {
 	const selectedFontRef = useRef<HTMLDivElement>(null);
 	const [isFocus, setIsFocus] = useState(false);
-	const [selectedFont, setSelectedFont] =
-		useState<FontItem>(defaultFont);
-	const [fontBoxAnimation, fontBoxAnimationController] = useSpring(
-		() => {}
-	);
+	const [selectedFont, setSelectedFont] = useState<FontItem>(defaultFont);
+	const [fontBoxAnimation, fontBoxAnimationController] = useSpring(() => {});
 
 	const fontItemOnClickHandler = (e: MouseEvent<HTMLLIElement>) => {
 		e.stopPropagation();
 		setIsFocus(false);
 		setSelectedFont({
 			fontName: e.currentTarget.innerText,
-			fontValue: e.currentTarget.getAttribute(
-				'font-value'
-			) as string,
+			fontValue: e.currentTarget.getAttribute('font-value') as string,
 		});
 	};
 
@@ -70,6 +57,7 @@ export default function FontOption({ setEmoteModifiers }: Props) {
 			<li
 				key={fontItem.fontValue}
 				onClick={fontItemOnClickHandler}
+				// eslint-disable-next-line react/no-unknown-property
 				font-value={fontItem.fontValue}
 				className='font-item'>
 				{fontItem.fontName}
@@ -84,10 +72,7 @@ export default function FontOption({ setEmoteModifiers }: Props) {
 		setIsFocus(true);
 		const documentEventID = () => {
 			setIsFocus(false);
-			document.removeEventListener(
-				'click',
-				documentEventID
-			);
+			document.removeEventListener('click', documentEventID);
 		};
 		document.addEventListener('click', documentEventID);
 	};
@@ -124,20 +109,13 @@ export default function FontOption({ setEmoteModifiers }: Props) {
 					className='option-box'
 					id='font-option'>
 					<div
-						ref={
-							selectedFontRef
-						}
-						font-value={
-							selectedFont.fontValue
-						}
+						ref={selectedFontRef}
+						// eslint-disable-next-line react/no-unknown-property
+						font-value={selectedFont.fontValue}
 						id='selected-font'>
-						{
-							selectedFont.fontName
-						}
+						{selectedFont.fontName}
 					</div>
-					<ul className='font-list'>
-						{generateFontList()}
-					</ul>
+					<ul className='font-list'>{generateFontList()}</ul>
 				</animated.div>
 			</div>
 		</div>
