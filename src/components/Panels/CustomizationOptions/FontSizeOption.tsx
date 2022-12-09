@@ -1,15 +1,20 @@
-import { useState, ChangeEvent, useEffect, MouseEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect, MouseEvent } from 'react';
 import { animated, AnimationProps, useSpring } from '@react-spring/web';
 import FontSizeIcon from '../../../assets/icon-font-size.svg';
+import { EmoteModifiers } from '../../EmoteAssets';
 
 const inputAnimationConfig: AnimationProps['config'] = {
-  mass: 1,
-  tension: 500,
-  friction: 20,
+  mass: 0.3,
+  tension: 300,
+  friction: 15,
   // clamp: true
 };
 
-export default function FontSizeOption() {
+interface Props {
+  setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
+}
+
+export default function FontSizeOption({ setEmoteModifiers }: Props) {
   const defaultFontSize = 12;
   const [fontSize, setFontSize] = useState<number>(defaultFontSize);
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +44,10 @@ export default function FontSizeOption() {
       to: [{ scale: 1.6 }, { scale: 1 }],
       config: inputAnimationConfig,
     });
+    setEmoteModifiers((state: EmoteModifiers) => ({
+      ...state,
+      fontSize,
+    }));
   }, [fontSize]);
 
   return (

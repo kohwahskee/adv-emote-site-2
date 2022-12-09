@@ -31,7 +31,7 @@
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ],
     // "no-empty-function": "warn",
-    "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-empty-function": "off",
     "react/jsx-key": "warn",
     "react/no-unknown-property": "warn",
     "jsx-a11y/click-events-have-key-events": "off",
@@ -48,7 +48,9 @@
         "tsx": "never"
       }
     ],
+    "no-plusplus": "off",
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"]
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "prefer-destructuring": "warn"
   }
 }

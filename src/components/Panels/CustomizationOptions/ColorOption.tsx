@@ -1,26 +1,29 @@
-import { ColorResult, SketchPicker } from 'react-color';
-import React, { MouseEvent, useEffect, useState } from 'react';
+import { SketchPicker, ColorResult } from 'react-color';
+import React, { useEffect, useState, MouseEvent } from 'react';
 import { animated, AnimationProps, useSpring } from '@react-spring/web';
 import ColorIcon from '../../../assets/icon-color.svg';
+import { EmoteModifiers } from '../../EmoteAssets';
 
 const animationConfig: AnimationProps['config'] = {
-  mass: 0.5,
-  tension: 305,
-  friction: 10,
-  // easing: easings.easeOutCubic,
-  // duration: 250,
+  mass: 1,
+  tension: 705,
+  friction: 20,
 };
 
-export default function ColorOption() {
-  const [color, setColor] = useState<string>('#FFDE98');
+interface Props {
+  setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
+}
+
+export default function ColorOption({ setEmoteModifiers }: Props) {
+  const [color, setColor] = useState('#FFDE98');
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [colorPickerAnimation, colorPickerAnimationController] = useSpring(
     () => ({
       from: { scale: 1.1 },
     })
   );
-  const onChangeHandler = (newColor: ColorResult) => {
-    setColor(newColor?.hex);
+  const onChangeHandler = (colorResult: ColorResult) => {
+    setColor(colorResult.hex);
   };
   const boxOnClickHandler = (e: MouseEvent) => {
     e.stopPropagation();
@@ -34,7 +37,6 @@ export default function ColorOption() {
     };
     const documentListenerId = () => {
       setIsFocused(false);
-
       // Remove listeners when no longer focused
       document.removeEventListener('click', documentListenerId);
       colorPicker?.removeEventListener('click', colorPickerListenerId);
@@ -46,13 +48,13 @@ export default function ColorOption() {
 
   useEffect(() => {
     if (isFocused) {
-      console.log('focused'); // This works
       colorPickerAnimationController.start({
-        // This is reached
-        to: [{ scale: 1.1 }, { scale: 1 }],
+        to: [{ scale: 1 }],
         config: animationConfig,
         reset: true,
       });
+    } else {
+      setEmoteModifiers((state: EmoteModifiers) => ({ ...state, color }));
     }
   }, [isFocused]);
 

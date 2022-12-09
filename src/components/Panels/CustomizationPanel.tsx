@@ -5,17 +5,21 @@ import FontOption from './CustomizationOptions/FontOption';
 import TextOption from './CustomizationOptions/TextOption';
 import FontSizeOption from './CustomizationOptions/FontSizeOption';
 import ColorOption from './CustomizationOptions/ColorOption';
+import { EmoteModifiers } from '../EmoteAssets';
 
 const animationConfig: AnimationProps['config'] = {
   mass: 1,
   tension: 385,
   friction: 20,
 };
+
 interface Props {
   currentSelection: string | null;
+  setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
 }
+
 export default function CustomizationPanel(props: Props) {
-  const { currentSelection } = props;
+  const { currentSelection, setEmoteModifiers } = props;
   const panelRef = useRef<HTMLDivElement>(null);
 
   const whenEmoteSelected = {
@@ -40,10 +44,10 @@ export default function CustomizationPanel(props: Props) {
       className='customization-panel panel'
     >
       <h1>Customization</h1>
-      <TextOption />
-      <FontOption />
-      <FontSizeOption />
-      <ColorOption />
+      <TextOption setEmoteModifiers={setEmoteModifiers} />
+      <FontOption setEmoteModifiers={setEmoteModifiers} />
+      <FontSizeOption setEmoteModifiers={setEmoteModifiers} />
+      <ColorOption setEmoteModifiers={setEmoteModifiers} />
     </animated.div>
   );
 }
