@@ -1,22 +1,15 @@
 import { animated, useSpring, AnimationProps } from '@react-spring/web';
 import React, { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import FontIcon from '../../../assets/icon-font.svg';
-import { EmoteModifiers } from '../../EmoteAssets';
+import { EmoteModifiers, fontMap } from '../../EmoteAssets';
 
 interface FontItem {
 	fontName: string;
 	fontValue: string;
 }
-const fontMap = {
-	Pixel: 'BPdots',
-	Handwritten: 'Wagnasty',
-	Letter: 'UnifrakturMaguntia',
-	'Letter 2': 'Satisfy-Regular',
-	Chalk: 'AfterShok',
-	BlackOps: 'BlackOpsOne-Regular',
-};
 
 // Convert fontMap to array of FontItem
+// ([{ fontName: 'Calibri', fontValue: 'Calibri' }, ...]}])
 const fontList: FontItem[] = Object.keys(fontMap).map((fontName, index) => ({
 	fontName,
 	fontValue: Object.values(fontMap)[index],

@@ -13,6 +13,7 @@ interface Props {
 	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
 }
 
+// TODO: Support Enter key to submit text
 export default function TextOption({ setEmoteModifiers }: Props) {
 	const [inputText, setInputText] = useState('');
 	const [isFocus, setIsFocus] = useState<boolean>(false);

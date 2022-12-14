@@ -61,6 +61,7 @@ function changeEmoteText(photopeaWindow: PhotopeaWindow, textLayer: string, newT
 
 	console.log(`Changed text to ${newText} on layer ${textLayer}`);
 }
+
 /**
  * Update emote with new modifiers
  * @remarks Compares old and new modifiers, update emote with EmoteModifier methods if there are changes
@@ -89,33 +90,47 @@ function updateEmote(
 /**
  * Initialize Photopea (load psd and fonts)
  */
-function photopeaInit(photopeaNode: HTMLIFrameElement, fileURL: string, fontURL?: string) {
+function photopeaInit(photopeaNode: HTMLIFrameElement, psdBuffer: ArrayBuffer) {
+	// TODO: Load all fonts when initializing Photopea
 	// 4 messages are sent when Photopea finishes loading psd and fonts
-	const READY_COUNT_ON_LOAD = 4;
-	let messageCount = 0;
+	const fontList = [
+		EmoteAssets.retroFontBuffer,
+		EmoteAssets.handWrittingFontBuffer,
+		EmoteAssets.chalkFontBuffer,
+		EmoteAssets.handwritting2FontBuffer,
+		EmoteAssets.scifiFontBuffer,
+		EmoteAssets.comicFontBuffer,
+		EmoteAssets.comicBoldFontBuffer,
+		EmoteAssets.comicItalicFontBuffer,
+	];
 	const photopeaWindow = photopeaNode.contentWindow;
-	const loadFont = `app.open("${fontURL}")`;
-	const loadImage = `app.open("${fileURL}", false)`;
+	// const loadFont = `app.open("${fontURL}")`;
+	// const loadImage = `app.open("${fileURL}", false)`;
+	// const fontValueList = Object.values(EmoteAssets.fontMap);
+	const READY_COUNT_ON_LOAD = 3 + fontList.length;
+
+	let messageCount = 0;
 
 	window.addEventListener('message', (e) => {
-		if (e.origin === 'https://www.photopea.com') {
-			messageCount++;
-			if (messageCount === READY_COUNT_ON_LOAD) {
-				// When finishes loading psd and fonts, change font to BPdots
-				changeFont(photopeaWindow, 'user', 'BPdots');
-			}
+		if (e.origin !== 'https://www.photopea.com') return;
+		messageCount++;
+		if (messageCount === READY_COUNT_ON_LOAD) {
+			// When finishes loading psd and fonts, change font to BPdots
 		}
+		console.log(messageCount);
 	});
 
-	if (photopeaWindow) {
-		photopeaWindow.postMessage(loadFont, '*');
-		photopeaWindow.postMessage(loadImage, '*');
-	}
+	fontList.forEach((buffer) => {
+		photopeaWindow?.postMessage(buffer, '*');
+	});
+	// photopeaWindow?.postMessage(EmoteAssets.handWrittingFontBuffer, '*');
+	// load images increase count by 3
+	photopeaWindow?.postMessage(psdBuffer, '*');
 }
 
 /**
- * Get emote file from Photopea
- * @remarks Photopea saves emote file as ArrayBuffer, convert it to Blob and return a URL string
+ * Get emote URL from Photopea
+ * @remarks Photopea saves emote file as an ArrayBuffer, convert it to a Blob and return a URL string to be used as src
  * @param photopeaNode Photopea iframe node
  * @param fileFormat File format to save emote as (png or jpeg)
  * @param emote name of current emote (lurk, sign, etc.)
@@ -132,40 +147,38 @@ function getEmoteURL(
 	const save = `app.activeDocument.saveToOE("${fileFormat}")`;
 	photopeaWindow.postMessage(save, '*');
 	let imgFile: File = new File([''], '', { type: 'image/png' });
-	const windowListenerId = (event: MessageEvent) => {
-		console.log('Received message from Photopea');
-		if (event.data instanceof ArrayBuffer) {
-			console.log('Received ArrayBuffer');
-			const rawData = event.data;
-			// ArrayBuffer -> Blob
-			const imgBlob = new Blob([rawData], {
-				type: `image/${fileFormat}`,
-			});
-			// Blob -> Image File
-			imgFile = new File([imgBlob], `emote.${fileFormat}`, {
-				type: `image/${fileFormat}`,
-			});
 
-			let downloadName = emote;
-			if (emoteText) {
-				downloadName += emoteText.charAt(0).toUpperCase() + emoteText.slice(1);
-			}
+	function windowListenerId(event: MessageEvent) {
+		if (!(event.data instanceof ArrayBuffer)) return;
+		const rawData = event.data;
+		// ArrayBuffer -> Blob
+		const imgBlob = new Blob([rawData], {
+			type: `image/${fileFormat}`,
+		});
+		// Blob -> Image File
+		imgFile = new File([imgBlob], `emote.${fileFormat}`, {
+			type: `image/${fileFormat}`,
+		});
 
-			if (downloadName.length >= 12) {
-				downloadName = `${downloadName.substring(0, 11)}...`;
-			}
-
-			// function convertByte(bytes) {
-			// 	if (bytes < 1000) return Math.round(bytes * 10) / 10 + ' B';
-			// 	else if (bytes >= 1000 && bytes < 1000000)
-			// 		return Math.round((bytes / 1000) * 10) / 10 + ' KB';
-			// 	else if (bytes >= 1000000) return Math.round((bytes / 1000000) * 10) / 10 + ' MB';
-			// }
-			const imageURL = URL.createObjectURL(imgFile);
-			window.removeEventListener('message', windowListenerId);
-			callbackFunction(imageURL);
+		let downloadName = emote;
+		if (emoteText) {
+			downloadName += emoteText.charAt(0).toUpperCase() + emoteText.slice(1);
 		}
-	};
+
+		if (downloadName.length >= 12) {
+			downloadName = `${downloadName.substring(0, 11)}...`;
+		}
+
+		// function convertByte(bytes) {
+		// 	if (bytes < 1000) return Math.round(bytes * 10) / 10 + ' B';
+		// 	else if (bytes >= 1000 && bytes < 1000000)
+		// 		return Math.round((bytes / 1000) * 10) / 10 + ' KB';
+		// 	else if (bytes >= 1000000) return Math.round((bytes / 1000000) * 10) / 10 + ' MB';
+		// }
+		const imageURL = URL.createObjectURL(imgFile);
+		window.removeEventListener('message', windowListenerId);
+		callbackFunction(imageURL);
+	}
 	window.addEventListener('message', windowListenerId);
 }
 
