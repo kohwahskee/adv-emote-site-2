@@ -12,16 +12,18 @@ const inputAnimationConfig: AnimationProps['config'] = {
 
 interface Props {
 	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
+	defaultFontSize: number;
 }
 
-export default function FontSizeOption({ setEmoteModifiers }: Props) {
-	const defaultFontSize = 12;
-	const [fontSize, setFontSize] = useState<number>(defaultFontSize);
-	const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		setFontSize(Number(event.target.value.replace('px', '').trim()) || defaultFontSize);
-	};
+export default function FontSizeOption({ setEmoteModifiers, defaultFontSize }: Props) {
+	const [fontSize, setFontSize] = useState<number>(defaultFontSize || 12);
 	const [inputAnimation, inputAnimationController] = useSpring(() => {});
-	const buttonOnClickHandler = (event: MouseEvent<HTMLButtonElement>) => {
+
+	function onChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+		setFontSize(Number(event.target.value.replace('px', '').trim()) || defaultFontSize);
+	}
+
+	function buttonOnClickHandler(event: MouseEvent<HTMLButtonElement>) {
 		event.preventDefault();
 		if (event.currentTarget.getAttribute('data-action') === 'increase') {
 			setFontSize(fontSize + 2);
@@ -30,11 +32,10 @@ export default function FontSizeOption({ setEmoteModifiers }: Props) {
 				if (currentFontSize <= 2) {
 					return 2;
 				}
-
 				return currentFontSize - 2;
 			});
 		}
-	};
+	}
 
 	useEffect(() => {
 		inputAnimationController.start({

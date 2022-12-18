@@ -79,6 +79,16 @@ const fontMap = {
 	'Comic Italic': 'ComicSansMS-Italic',
 };
 
+const EMOTE_DEFAULTS = {
+	lurk: {
+		font: {
+			fontName: 'Comic Italic',
+			fontValue: 'ComicSansMS-Italic',
+		},
+		fontSize: 111,
+	},
+};
+
 type EmoteModifiers = {
 	text: string;
 	color: string;
@@ -86,7 +96,7 @@ type EmoteModifiers = {
 	fontSize: number;
 };
 
-export { fontMap };
+export { fontMap, EMOTE_DEFAULTS };
 
 export {
 	lurkPSDBuffer,

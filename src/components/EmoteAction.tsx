@@ -2,12 +2,11 @@
  * Includes functions to modify emote in Photopea
  */
 /* eslint-disable no-console */
-import React from 'react';
 import * as EmoteAssets from './EmoteAssets';
 
 type PhotopeaWindow = HTMLIFrameElement['contentWindow'];
 
-function changeFont(photopeaWindow: PhotopeaWindow, textLayer: string, fontName: string) {
+function setFont(photopeaWindow: PhotopeaWindow, textLayer: string, fontName: string) {
 	if (!photopeaWindow) return;
 
 	photopeaWindow.postMessage(
@@ -19,11 +18,7 @@ function changeFont(photopeaWindow: PhotopeaWindow, textLayer: string, fontName:
 	console.log(`Changed font to ${fontName} on layer ${textLayer}`);
 }
 
-function changeFontSize(
-	photopeaWindow: PhotopeaWindow,
-	textLayer: string,
-	fontSizeInPixel: number
-) {
+function setFontSize(photopeaWindow: PhotopeaWindow, textLayer: string, fontSizeInPixel: number) {
 	if (!photopeaWindow) return;
 
 	photopeaWindow.postMessage(
@@ -36,7 +31,7 @@ function changeFontSize(
 	console.log(`Changed font size to ${fontSizeInPixel} on layer ${textLayer}`);
 }
 
-function changeFontColor(photopeaWindow: PhotopeaWindow, textLayer: string, fontColor: string) {
+function setFontColor(photopeaWindow: PhotopeaWindow, textLayer: string, fontColor: string) {
 	if (!photopeaWindow) return;
 
 	photopeaWindow.postMessage(
@@ -49,7 +44,7 @@ function changeFontColor(photopeaWindow: PhotopeaWindow, textLayer: string, font
 	console.log(`Changed font color to ${fontColor} on layer ${textLayer}`);
 }
 
-function changeEmoteText(photopeaWindow: PhotopeaWindow, textLayer: string, newText: string) {
+function setEmoteText(photopeaWindow: PhotopeaWindow, textLayer: string, newText: string) {
 	if (!photopeaWindow) return;
 
 	photopeaWindow.postMessage(
@@ -74,23 +69,27 @@ function updateEmote(
 	// if (!photopeaRef.current?.contentWindow) return;
 	// Compare old and new modifiers, update emote with EmoteModifier methods if there are changes
 	if (oldModifiers.text !== newModifiers.text) {
-		changeEmoteText(photopeaWindow, 'user', newModifiers.text);
+		setEmoteText(photopeaWindow, 'user', newModifiers.text);
 	}
 	if (oldModifiers.font !== newModifiers.font) {
-		changeFont(photopeaWindow, 'user', newModifiers.font);
+		setFont(photopeaWindow, 'user', newModifiers.font);
 	}
 	if (oldModifiers.color !== newModifiers.color) {
-		changeFontColor(photopeaWindow, 'user', newModifiers.color);
+		setFontColor(photopeaWindow, 'user', newModifiers.color);
 	}
 	if (oldModifiers.fontSize !== newModifiers.fontSize) {
-		changeFontSize(photopeaWindow, 'user', newModifiers.fontSize);
+		setFontSize(photopeaWindow, 'user', newModifiers.fontSize);
 	}
 }
 
 /**
  * Initialize Photopea (load psd and fonts)
  */
-function photopeaInit(photopeaNode: HTMLIFrameElement, psdBuffer: ArrayBuffer) {
+function photopeaInit(
+	photopeaNode: HTMLIFrameElement,
+	psdBuffer: ArrayBuffer,
+	callBackWhenFinish?: () => void
+) {
 	// TODO: Load all fonts when initializing Photopea
 	// 4 messages are sent when Photopea finishes loading psd and fonts
 	const fontList = [
@@ -107,7 +106,7 @@ function photopeaInit(photopeaNode: HTMLIFrameElement, psdBuffer: ArrayBuffer) {
 	// const loadFont = `app.open("${fontURL}")`;
 	// const loadImage = `app.open("${fileURL}", false)`;
 	// const fontValueList = Object.values(EmoteAssets.fontMap);
-	const READY_COUNT_ON_LOAD = 3 + fontList.length;
+	const READY_COUNT_ON_LOAD = 1 + fontList.length;
 
 	let messageCount = 0;
 
@@ -115,7 +114,8 @@ function photopeaInit(photopeaNode: HTMLIFrameElement, psdBuffer: ArrayBuffer) {
 		if (e.origin !== 'https://www.photopea.com') return;
 		messageCount++;
 		if (messageCount === READY_COUNT_ON_LOAD) {
-			// When finishes loading psd and fonts, change font to BPdots
+			// When finishes loading psd and fonts, call callback function
+			callBackWhenFinish?.();
 		}
 		console.log(messageCount);
 	});
@@ -140,53 +140,54 @@ function getEmoteURL(
 	photopeaNode: HTMLIFrameElement,
 	fileFormat: string,
 	emote: string,
-	emoteText: string,
-	callbackFunction: React.Dispatch<React.SetStateAction<string>>
-) {
-	const photopeaWindow = photopeaNode.contentWindow as Window;
-	const save = `app.activeDocument.saveToOE("${fileFormat}")`;
-	photopeaWindow.postMessage(save, '*');
-	let imgFile: File = new File([''], '', { type: 'image/png' });
+	emoteText: string
+): Promise<string> {
+	return new Promise<string>((resolve) => {
+		const photopeaWindow = photopeaNode.contentWindow as Window;
+		const save = `app.activeDocument.saveToOE("${fileFormat}")`;
+		photopeaWindow.postMessage(save, '*');
+		let imgFile: File = new File([''], '', { type: 'image/png' });
+		let imageURL: string;
+		function windowListenerId(event: MessageEvent) {
+			if (!(event.data instanceof ArrayBuffer)) return;
+			const rawData = event.data;
+			// ArrayBuffer -> Blob
+			const imgBlob = new Blob([rawData], {
+				type: `image/${fileFormat}`,
+			});
+			// Blob -> Image File
+			imgFile = new File([imgBlob], `emote.${fileFormat}`, {
+				type: `image/${fileFormat}`,
+			});
 
-	function windowListenerId(event: MessageEvent) {
-		if (!(event.data instanceof ArrayBuffer)) return;
-		const rawData = event.data;
-		// ArrayBuffer -> Blob
-		const imgBlob = new Blob([rawData], {
-			type: `image/${fileFormat}`,
-		});
-		// Blob -> Image File
-		imgFile = new File([imgBlob], `emote.${fileFormat}`, {
-			type: `image/${fileFormat}`,
-		});
+			let downloadName = emote;
+			if (emoteText) {
+				downloadName += emoteText.charAt(0).toUpperCase() + emoteText.slice(1);
+			}
 
-		let downloadName = emote;
-		if (emoteText) {
-			downloadName += emoteText.charAt(0).toUpperCase() + emoteText.slice(1);
+			if (downloadName.length >= 12) {
+				downloadName = `${downloadName.substring(0, 11)}...`;
+			}
+
+			// function convertByte(bytes) {
+			// 	if (bytes < 1000) return Math.round(bytes * 10) / 10 + ' B';
+			// 	else if (bytes >= 1000 && bytes < 1000000)
+			// 		return Math.round((bytes / 1000) * 10) / 10 + ' KB';
+			// 	else if (bytes >= 1000000) return Math.round((bytes / 1000000) * 10) / 10 + ' MB';
+			// }
+			imageURL = URL.createObjectURL(imgFile);
+			window.removeEventListener('message', windowListenerId);
+			resolve(imageURL);
 		}
-
-		if (downloadName.length >= 12) {
-			downloadName = `${downloadName.substring(0, 11)}...`;
-		}
-
-		// function convertByte(bytes) {
-		// 	if (bytes < 1000) return Math.round(bytes * 10) / 10 + ' B';
-		// 	else if (bytes >= 1000 && bytes < 1000000)
-		// 		return Math.round((bytes / 1000) * 10) / 10 + ' KB';
-		// 	else if (bytes >= 1000000) return Math.round((bytes / 1000000) * 10) / 10 + ' MB';
-		// }
-		const imageURL = URL.createObjectURL(imgFile);
-		window.removeEventListener('message', windowListenerId);
-		callbackFunction(imageURL);
-	}
-	window.addEventListener('message', windowListenerId);
+		window.addEventListener('message', windowListenerId);
+	});
 }
 
 export {
-	changeFont,
-	changeEmoteText,
-	changeFontColor,
-	changeFontSize,
+	setFont as changeFont,
+	setEmoteText as changeEmoteText,
+	setFontColor as changeFontColor,
+	setFontSize as changeFontSize,
 	updateEmote,
 	photopeaInit,
 	getEmoteURL,

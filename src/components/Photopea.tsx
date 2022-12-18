@@ -18,6 +18,17 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 	const photopeaRef = useRef<HTMLIFrameElement>(null);
 	const oldEmoteModifiers = useRef<EmoteAssets.EmoteModifiers>(emoteModifiers);
 
+	function initOnComplete() {
+		EmoteAction.getEmoteURL(
+			photopeaRef.current as HTMLIFrameElement,
+			'png',
+			'lurk',
+			emoteModifiers.text
+		).then((url) => {
+			setEmotePreviewURL(url);
+		});
+	}
+
 	// Debounce updateEmote function to prevent request spamming (2 seconds delay);
 	useEffect(() => {
 		const debouncer = setTimeout(() => {
@@ -31,9 +42,10 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 				photopeaRef.current as HTMLIFrameElement,
 				'png',
 				'lurk',
-				emoteModifiers.text,
-				setEmotePreviewURL
-			);
+				emoteModifiers.text
+			).then((url) => {
+				setEmotePreviewURL(url);
+			});
 
 			oldEmoteModifiers.current = emoteModifiers;
 		}, UPDATE_DELAY_IN_MS);
@@ -48,7 +60,8 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 			onLoad={() => {
 				EmoteAction.photopeaInit(
 					photopeaRef.current as HTMLIFrameElement,
-					EmoteAssets.lurkPSDBuffer
+					EmoteAssets.lurkPSDBuffer,
+					initOnComplete
 				);
 			}}
 			ref={photopeaRef}

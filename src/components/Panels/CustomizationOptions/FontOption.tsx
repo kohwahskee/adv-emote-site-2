@@ -15,11 +15,6 @@ const fontList: FontItem[] = Object.keys(fontMap).map((fontName, index) => ({
 	fontValue: Object.values(fontMap)[index],
 }));
 
-const defaultFont: FontItem = {
-	fontName: 'Calibri',
-	fontValue: 'Calibri',
-};
-
 const animationConfig: AnimationProps['config'] = {
 	mass: 1,
 	tension: 385,
@@ -28,9 +23,10 @@ const animationConfig: AnimationProps['config'] = {
 
 interface Props {
 	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
+	defaultFont: FontItem;
 }
 
-export default function FontOption({ setEmoteModifiers }: Props) {
+export default function FontOption({ setEmoteModifiers, defaultFont }: Props) {
 	const selectedFontRef = useRef<HTMLDivElement>(null);
 	const [isFocus, setIsFocus] = useState(false);
 	const [selectedFont, setSelectedFont] = useState<FontItem>(defaultFont);
