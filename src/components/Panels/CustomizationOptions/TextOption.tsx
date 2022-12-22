@@ -13,14 +13,14 @@ interface Props {
 	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
 }
 
-// TODO: Support Enter key to submit text
-export default function TextOption({ setEmoteModifiers }: Props) {
+function useInputAnimation(
+	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>,
+	inputRef: React.RefObject<HTMLInputElement>
+) {
 	const [inputText, setInputText] = useState('');
 	const [isFocus, setIsFocus] = useState<boolean>(false);
 	const [textBoxAnimationWhenFocused, textBoxAnimationController] = useSpring(() => {});
-	const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		setInputText(event.target.value);
-	};
+
 	const animationConfig = {
 		config: {
 			mass: 1,
@@ -40,8 +40,23 @@ export default function TextOption({ setEmoteModifiers }: Props) {
 				...state,
 				text: inputText,
 			}));
+			inputRef.current?.blur();
 		}
 	}, [isFocus]);
+
+	return { setIsFocus, textBoxAnimationWhenFocused, inputText, setInputText };
+}
+
+export default function TextOption({ setEmoteModifiers }: Props) {
+	const inputRef = React.useRef<HTMLInputElement>(null);
+	const { setIsFocus, textBoxAnimationWhenFocused, inputText, setInputText } = useInputAnimation(
+		setEmoteModifiers,
+		inputRef
+	);
+
+	const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+		setInputText(event.target.value);
+	};
 
 	return (
 		<div className='option-container'>
@@ -53,6 +68,7 @@ export default function TextOption({ setEmoteModifiers }: Props) {
 					/>
 				</div>
 				<animated.input
+					ref={inputRef}
 					value={inputText}
 					style={textBoxAnimationWhenFocused}
 					onChange={onChangeHandler}
@@ -61,6 +77,11 @@ export default function TextOption({ setEmoteModifiers }: Props) {
 					}}
 					onBlur={() => {
 						setIsFocus(false);
+					}}
+					onKeyDown={(event) => {
+						if (event.key === 'Enter') {
+							setIsFocus(false);
+						}
 					}}
 					placeholder='Text...'
 					className='option-box'

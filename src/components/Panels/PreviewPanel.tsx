@@ -11,11 +11,11 @@ interface Props {
 
 // TODO: Add download functionality (maybe some animation too?)
 export default function PreviewPanel({ emotePreviewURL }: Props) {
-	const { RiveComponent } = useRive({
+	const { rive, RiveComponent } = useRive({
 		src: RiveDownloadButton,
 		stateMachines: 'State Machine 1',
 		layout: new Layout({
-			fit: Fit.ScaleDown,
+			fit: Fit.Contain,
 			alignment: Alignment.Center,
 		}),
 		autoplay: true,
@@ -42,6 +42,10 @@ export default function PreviewPanel({ emotePreviewURL }: Props) {
 							// width: '90%',
 							height: '6em',
 							cursor: 'pointer',
+						}}
+						width={200}
+						onLoad={() => {
+							rive?.resizeDrawingSurfaceToCanvas();
 						}}
 					/>
 				</a>

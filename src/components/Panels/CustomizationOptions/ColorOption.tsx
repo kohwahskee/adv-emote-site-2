@@ -69,7 +69,7 @@ export default function ColorOption({ setEmoteModifiers }: Props) {
 					className='color-picker-container'>
 					<SketchPicker
 						styles={{
-							default: { picker: { display: isFocused ? 'unset' : 'none' } },
+							default: { picker: { display: isFocused ? 'unset' : 'none', userSelect: 'none' } },
 						}}
 						width='10em'
 						disableAlpha
