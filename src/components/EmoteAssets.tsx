@@ -87,6 +87,13 @@ const EMOTE_DEFAULTS = {
 		},
 		fontSize: 111,
 	},
+	PepegaSign: {
+		font: {
+			fontName: 'Comic Italic',
+			fontValue: 'ComicSansMS-Italic',
+		},
+		fontSize: 111,
+	},
 };
 
 type EmoteModifiers = {
@@ -95,6 +102,9 @@ type EmoteModifiers = {
 	font: string;
 	fontSize: number;
 };
+
+// type EmotePresets = 'lurk' | 'sign' | 'signA' | 'clapSign' | 'pepeHazmat' | 'PET' | 'pepegaSign';
+type EmotePresets = 'lurk';
 
 export { fontMap, EMOTE_DEFAULTS };
 
@@ -120,4 +130,4 @@ export {
 // default fonts
 export { comicFontBuffer, comicBoldFontBuffer, comicItalicFontBuffer };
 
-export type { EmoteModifiers };
+export type { EmoteModifiers, EmotePresets };

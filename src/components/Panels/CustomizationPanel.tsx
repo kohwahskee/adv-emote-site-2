@@ -1,11 +1,12 @@
 import '../../css/Style-CustomizationPanel.scss';
 import React, { useEffect, useRef } from 'react';
 import { animated, useSpring, AnimationProps } from '@react-spring/web';
+import { useParams } from 'react-router-dom';
 import FontOption from './CustomizationOptions/FontOption';
 import TextOption from './CustomizationOptions/TextOption';
 import FontSizeOption from './CustomizationOptions/FontSizeOption';
 import ColorOption from './CustomizationOptions/ColorOption';
-import { EmoteModifiers, EMOTE_DEFAULTS } from '../EmoteAssets';
+import { EmoteModifiers, EMOTE_DEFAULTS, EmotePresets } from '../EmoteAssets';
 
 const animationConfig: AnimationProps['config'] = {
 	mass: 1,
@@ -20,10 +21,17 @@ interface Props {
 
 export default function CustomizationPanel(props: Props) {
 	// TODO: Change this to be dynamic
-	const currentEmote = 'lurk';
 	const { currentSelection, setEmoteModifiers } = props;
 	const panelRef = useRef<HTMLDivElement>(null);
+	const { emotePreset } = useParams();
+	const currentEmote: EmotePresets = (emotePreset as 'lurk') || 'PepegaSign';
 
+	let emoteType = 'text';
+	if (currentEmote === 'lurk') {
+		emoteType = 'text';
+	} else if (currentEmote === 'PepegaSign') {
+		emoteType = 'image';
+	}
 	const whenEmoteSelected = {
 		to: { top: currentSelection === 'emotes' ? '-35%' : '25%' },
 		delay: currentSelection === 'emotes' ? 0 : 50,
@@ -46,16 +54,25 @@ export default function CustomizationPanel(props: Props) {
 			ref={panelRef}
 			className='customization-panel panel'>
 			<h1>Customization</h1>
-			<TextOption setEmoteModifiers={setEmoteModifiers} />
-			<FontOption
-				setEmoteModifiers={setEmoteModifiers}
-				defaultFont={EMOTE_DEFAULTS[currentEmote].font}
-			/>
-			<FontSizeOption
-				setEmoteModifiers={setEmoteModifiers}
-				defaultFontSize={EMOTE_DEFAULTS[currentEmote].fontSize}
-			/>
-			<ColorOption setEmoteModifiers={setEmoteModifiers} />
+			{emoteType === 'text' ? (
+				<>
+					<TextOption setEmoteModifiers={setEmoteModifiers} />
+					<FontOption
+						setEmoteModifiers={setEmoteModifiers}
+						defaultFont={EMOTE_DEFAULTS[currentEmote].font}
+					/>
+					<FontSizeOption
+						setEmoteModifiers={setEmoteModifiers}
+						defaultFontSize={EMOTE_DEFAULTS[currentEmote].fontSize}
+					/>
+					<ColorOption setEmoteModifiers={setEmoteModifiers} />
+				</>
+			) : (
+				<>
+					<TextOption setEmoteModifiers={setEmoteModifiers} />
+					<ColorOption setEmoteModifiers={setEmoteModifiers} />
+				</>
+			)}
 		</animated.div>
 	);
 }

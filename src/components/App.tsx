@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import CustomizationPanel from './Panels/CustomizationPanel';
 import PreviewPanel from './Panels/PreviewPanel';
 import EmoteSelectionPanel from './Panels/EmoteSelectionPanel';
@@ -26,10 +27,18 @@ export default function App() {
 				selectionOnclickHandler={onSelectionChange}
 				currentSelection={selectionState}
 			/>
-			<CustomizationPanel
-				setEmoteModifiers={setEmoteModifiers}
-				currentSelection={selectionState}
-			/>
+			<Routes>
+				<Route
+					path='/emote/:emotePreset'
+					element={
+						<CustomizationPanel
+							setEmoteModifiers={setEmoteModifiers}
+							currentSelection={selectionState}
+						/>
+					}
+				/>
+			</Routes>
+
 			<EmoteSelectionPanel currentSelection={selectionState} />
 			<PreviewPanel emotePreviewURL={emotePreviewURL} />
 			<Photopea
