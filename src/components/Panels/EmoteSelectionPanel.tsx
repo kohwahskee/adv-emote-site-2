@@ -2,7 +2,7 @@
 import '../../css/Style-EmoteSelection.scss';
 import { animated, AnimationProps, useSpring } from '@react-spring/web';
 import { Link } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import scaleToFit from '../ScaleToFit';
 
 interface Props {
@@ -17,108 +17,80 @@ function generateSelectionLinks() {
 	let currIndex = 0;
 	const rowList = [];
 
-	for (let i = minIconInRow; i <= midRow; i++) {
-		rowList.push(
-			<div className='icon-row'>
-				{(() => {
-					const iconList = [];
-					for (let x = 1; x <= i; x++) {
-						iconList.push(
-							<Link
-								onMouseDown={(e) => e.preventDefault()}
-								className='emote-selection'
-								to={`/emote/${emoteSelections[currIndex]}`}>
-								{/* {emoteSelections[currIndex]} */}
-							</Link>
-						);
-						currIndex++;
-					}
-					return <>{iconList.map((icon) => icon)}</>;
-				})()}
-			</div>
-		);
+	function getRow(numIcons: number, startIndex: number) {
+		const iconList = [];
+		for (let i = 0; i < numIcons; i++) {
+			iconList.push(
+				<Link
+					onMouseDown={(e) => e.preventDefault()}
+					className='emote-selection'
+					to={`/emote/${emoteSelections[startIndex + i]}`}
+				/>
+			);
+		}
+
+		return <div className='icon-row'>{iconList.map((icon) => icon)}</div>;
 	}
 
+	for (let i = minIconInRow; i <= midRow; i++) {
+		rowList.push(getRow(i, currIndex));
+		currIndex += i;
+	}
 	for (let i = numOfRows; i >= midRow + minIconInRow; i--) {
-		rowList.push(
-			<div className='icon-row'>
-				{(() => {
-					const iconList = [];
-					for (let x = i - midRow - 1; x >= 0; x--) {
-						iconList.push(
-							<Link
-								onMouseDown={(e) => e.preventDefault()}
-								className='emote-selection'
-								to={`/emote/${emoteSelections[currIndex]}`}>
-								{/* {emoteSelections[currIndex]} */}
-							</Link>
-						);
-						currIndex++;
-					}
-					return <>{iconList.map((icon) => icon)}</>;
-				})()}
-			</div>
-		);
+		rowList.push(getRow(i - midRow - 1, currIndex));
+		currIndex += i - midRow - 1;
 	}
 
 	return <>{rowList.map((row) => row)}</>;
 }
 
+let iconsContainerRef: React.RefObject<HTMLDivElement>;
+let iconList: Element[] = [];
+
+function useScaleIconOnDrag(containerPos: { top: number; left: number }) {
+	useEffect(() => {
+		scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
+	}, [containerPos]);
+}
+
 export default function EmoteSelectionPanel(props: Props) {
-	const iconsContainerRef = useRef<HTMLDivElement>(null);
-	const iconsWrapperRef = useRef<HTMLDivElement>(null);
-	let iconList: Element[] = [];
+	iconsContainerRef = useRef<HTMLDivElement>(null);
+	const [containerPos, setContainerPos] = useState({ top: 0, left: 0 });
 	const { currentSelection } = props;
+
 	const animationConfig: AnimationProps['config'] = {
 		mass: 1,
 		tension: 385,
 		friction: 20,
 	};
-
 	const springConfig = {
 		to: { top: currentSelection === 'emotes' ? '25%' : '90%' },
 		delay: currentSelection === 'emotes' ? 50 : 0,
 		config: animationConfig,
 	};
-
 	const panelStyleWhenSelected = useSpring(springConfig);
 
-	function draggingHandler(e: MouseEvent) {
+	function dragging(e: MouseEvent) {
 		e.preventDefault();
-
-		const iconsContainer = iconsContainerRef.current;
-		const iconsWrapper = iconsWrapperRef.current;
-		if (iconsWrapper === null) return;
-
 		// Move icon according to mouse movement
-		iconsWrapper.style.top = `${
-			Number(iconsWrapper.style.top.substring(0, iconsWrapper.style.top.length - 2)) +
-			e.movementY / 2
-		}px`;
-
-		iconsWrapper.style.left = `${
-			Number(iconsWrapper.style.left.substring(0, iconsWrapper.style.left.length - 2)) +
-			e.movementX / 2
-		}px`;
-
-		scaleToFit(iconsContainer as HTMLElement, iconList as HTMLElement[]);
+		setContainerPos((prevPos) => ({
+			top: prevPos.top + e.movementY / 1.5,
+			left: prevPos.left + e.movementX / 1.5,
+		}));
+	}
+	function dragEnd() {
+		document.removeEventListener('mousemove', dragging);
+	}
+	function dragStart() {
+		document.addEventListener('mousemove', dragging);
+		document.addEventListener('mouseup', dragEnd, { once: true });
 	}
 
 	useEffect(() => {
-		if (iconsContainerRef.current === null) return;
-
-		scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
-
 		iconList = Array.from(document.getElementsByClassName('emote-selection'));
-
-		iconsContainerRef.current.addEventListener('mousedown', () => {
-			document.addEventListener('mousemove', draggingHandler);
-		});
-
-		document.addEventListener('mouseup', () => {
-			document.removeEventListener('mousemove', draggingHandler);
-		});
 	}, []);
+
+	useScaleIconOnDrag(containerPos);
 
 	return (
 		<animated.div
@@ -127,12 +99,13 @@ export default function EmoteSelectionPanel(props: Props) {
 			<h1>Emotes</h1>
 			<div
 				ref={iconsContainerRef}
+				onMouseDown={dragStart}
 				className='emote-selections-container'>
-				<div
-					ref={iconsWrapperRef}
-					className='icons-wrapper'>
+				<animated.div
+					className='icons-wrapper'
+					style={{ top: `${containerPos.top}px`, left: `${containerPos.left}px` }}>
 					{generateSelectionLinks()}
-				</div>
+				</animated.div>
 			</div>
 		</animated.div>
 	);
