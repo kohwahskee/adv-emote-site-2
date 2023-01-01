@@ -43,7 +43,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80%;
+  height: 15em;
   padding: .5em;
   overflow: hidden;
   background-color: var(--color-black-15);
@@ -77,8 +77,23 @@
   background-color: lightpink;
 }
 
+.emote-selection-panel {
+  height: auto;
+}
+
 .icon-row {
   display: flex;
   flex-direction: row;
   /* pointer-events: none; */
+}
+
+h5 {
+  position: relative;
+  margin-top: .5em;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  color: var(--color-black-15);
+  font-family: 'Itim', sans-serif;
+  font-weight: 100;
 }

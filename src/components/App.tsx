@@ -22,29 +22,28 @@ export default function App() {
 	};
 
 	return (
-		<div>
-			<PanelSelection
-				selectionOnclickHandler={onSelectionChange}
-				currentSelection={selectionState}
-			/>
-			<Routes>
-				<Route
-					path='/emote/:emotePreset'
-					element={
+		<Routes>
+			<Route
+				path='/emote/:emotePreset'
+				element={
+					<div>
+						<PanelSelection
+							selectionOnclickHandler={onSelectionChange}
+							currentSelection={selectionState}
+						/>
 						<CustomizationPanel
 							setEmoteModifiers={setEmoteModifiers}
 							currentSelection={selectionState}
 						/>
-					}
-				/>
-			</Routes>
-
-			<EmoteSelectionPanel currentSelection={selectionState} />
-			<PreviewPanel emotePreviewURL={emotePreviewURL} />
-			<Photopea
-				setEmotePreviewURL={setEmotePreviewURL}
-				emoteModifiers={emoteModifers}
+						<EmoteSelectionPanel currentSelection={selectionState} />
+						<PreviewPanel emotePreviewURL={emotePreviewURL} />
+						<Photopea
+							setEmotePreviewURL={setEmotePreviewURL}
+							emoteModifiers={emoteModifers}
+						/>
+					</div>
+				}
 			/>
-		</div>
+		</Routes>
 	);
 }

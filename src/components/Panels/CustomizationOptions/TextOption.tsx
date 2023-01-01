@@ -1,5 +1,6 @@
 import { animated, useSpring } from '@react-spring/web';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import TextIcon from '../../../assets/icon-text.svg';
 // import { EmoteModifiers } from '../../EmoteAssets';
 
@@ -49,6 +50,7 @@ function useInputAnimation(
 
 export default function TextOption({ setEmoteModifiers }: Props) {
 	const inputRef = React.useRef<HTMLInputElement>(null);
+	const { emotePreset } = useParams();
 	const { setIsFocus, textBoxAnimationWhenFocused, inputText, setInputText } = useInputAnimation(
 		setEmoteModifiers,
 		inputRef
@@ -57,6 +59,10 @@ export default function TextOption({ setEmoteModifiers }: Props) {
 	const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		setInputText(event.target.value);
 	};
+
+	useEffect(() => {
+		setInputText('');
+	}, [emotePreset]);
 
 	return (
 		<div className='option-container'>

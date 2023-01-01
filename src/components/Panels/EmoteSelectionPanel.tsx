@@ -1,8 +1,9 @@
 /* eslint-disable no-loop-func */
 import '../../css/Style-EmoteSelection.scss';
-import { animated, AnimationProps, useSpring } from '@react-spring/web';
+import { animated, AnimationProps, SpringRef, useSpring } from '@react-spring/web';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useRef, useState } from 'react';
+import { Lookup } from '@react-spring/types';
 import scaleToFit from '../ScaleToFit';
 
 interface Props {
@@ -10,7 +11,8 @@ interface Props {
 }
 
 function generateSelectionLinks() {
-	const emoteSelections = ['lurk', 'sign', 'signA', 'PepegaSign', 'PETTHE', 'peepoFlag', 'signB'];
+	const emoteSelections = ['lurk', 'PeepoSign', 'lurk', 'lurk', 'lurk', 'lurk', 'lurk'];
+	// const emoteSelections = ['lurk', 'sign', 'signA', 'PepegaSign', 'PETTHE', 'peepoFlag', 'signB'];
 	const numOfRows = 5;
 	const minIconInRow = 2;
 	const midRow = Math.round(numOfRows / 2);
@@ -47,9 +49,22 @@ function generateSelectionLinks() {
 let iconsContainerRef: React.RefObject<HTMLDivElement>;
 let iconList: Element[] = [];
 
-function useScaleIconOnDrag(containerPos: { top: number; left: number }) {
+function useScaleIconOnDrag(
+	containerPos: { top: number; left: number },
+	controller: SpringRef<Lookup<any>>
+) {
 	useEffect(() => {
-		scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
+		controller.start({
+			to: containerPos,
+			config: {
+				mass: 1,
+				tension: 700,
+				friction: 20,
+			},
+			onChange: () => {
+				scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
+			},
+		});
 	}, [containerPos]);
 }
 
@@ -58,24 +73,25 @@ export default function EmoteSelectionPanel(props: Props) {
 	const [containerPos, setContainerPos] = useState({ top: 0, left: 0 });
 	const { currentSelection } = props;
 
-	const animationConfig: AnimationProps['config'] = {
+	const panelAnimationConfig: AnimationProps['config'] = {
 		mass: 1,
 		tension: 385,
 		friction: 20,
 	};
-	const springConfig = {
+	const panelSpringConfig = {
 		to: { top: currentSelection === 'emotes' ? '25%' : '90%' },
 		delay: currentSelection === 'emotes' ? 50 : 0,
-		config: animationConfig,
+		config: panelAnimationConfig,
 	};
-	const panelStyleWhenSelected = useSpring(springConfig);
+	const panelStyleWhenSelected = useSpring(panelSpringConfig);
+	const [dragNThrowAnimation, dragNThrowController] = useSpring(() => {});
 
 	function dragging(e: MouseEvent) {
 		e.preventDefault();
 		// Move icon according to mouse movement
 		setContainerPos((prevPos) => ({
-			top: prevPos.top + e.movementY / 1.5,
-			left: prevPos.left + e.movementX / 1.5,
+			top: prevPos.top + e.movementY,
+			left: prevPos.left + e.movementX,
 		}));
 	}
 	function dragEnd() {
@@ -87,10 +103,11 @@ export default function EmoteSelectionPanel(props: Props) {
 	}
 
 	useEffect(() => {
+		scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
 		iconList = Array.from(document.getElementsByClassName('emote-selection'));
 	}, []);
 
-	useScaleIconOnDrag(containerPos);
+	useScaleIconOnDrag(containerPos, dragNThrowController);
 
 	return (
 		<animated.div
@@ -103,10 +120,11 @@ export default function EmoteSelectionPanel(props: Props) {
 				className='emote-selections-container'>
 				<animated.div
 					className='icons-wrapper'
-					style={{ top: `${containerPos.top}px`, left: `${containerPos.left}px` }}>
+					style={dragNThrowAnimation}>
 					{generateSelectionLinks()}
 				</animated.div>
 			</div>
+			<h5>Click and drag to browse</h5>
 		</animated.div>
 	);
 }

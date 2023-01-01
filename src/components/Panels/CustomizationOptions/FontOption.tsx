@@ -1,5 +1,6 @@
 import { animated, useSpring, AnimationProps } from '@react-spring/web';
 import React, { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import FontIcon from '../../../assets/icon-font.svg';
 import { EmoteModifiers, fontMap } from '../../EmoteAssets';
 
@@ -29,6 +30,7 @@ interface Props {
 export default function FontOption({ setEmoteModifiers, defaultFont }: Props) {
 	const selectedFontRef = useRef<HTMLDivElement>(null);
 	const [isFocus, setIsFocus] = useState(false);
+	const { emotePreset } = useParams();
 	const [selectedFont, setSelectedFont] = useState<FontItem>(defaultFont);
 	const [fontBoxAnimation, fontBoxAnimationController] = useSpring(() => {});
 
@@ -82,6 +84,11 @@ export default function FontOption({ setEmoteModifiers, defaultFont }: Props) {
 			font: selectedFont.fontValue,
 		}));
 	}, [selectedFont]);
+
+	// Update selected font when emote preset changes
+	useEffect(() => {
+		setSelectedFont(defaultFont);
+	}, [emotePreset]);
 
 	return (
 		<div className='option-container'>

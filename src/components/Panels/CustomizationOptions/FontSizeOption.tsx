@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, useEffect, MouseEvent } from 'react';
 import { animated, AnimationProps, useSpring } from '@react-spring/web';
+import { useParams } from 'react-router-dom';
 import FontSizeIcon from '../../../assets/icon-font-size.svg';
 import { EmoteModifiers } from '../../EmoteAssets';
 
@@ -18,7 +19,7 @@ interface Props {
 export default function FontSizeOption({ setEmoteModifiers, defaultFontSize }: Props) {
 	const [fontSize, setFontSize] = useState<number>(defaultFontSize || 12);
 	const [inputAnimation, inputAnimationController] = useSpring(() => {});
-
+	const { emotePreset } = useParams();
 	function onChangeHandler(event: ChangeEvent<HTMLInputElement>) {
 		setFontSize(Number(event.target.value.replace('px', '').trim()) || defaultFontSize);
 	}
@@ -48,6 +49,11 @@ export default function FontSizeOption({ setEmoteModifiers, defaultFontSize }: P
 			fontSize,
 		}));
 	}, [fontSize]);
+
+	// Resets to default when different emote preset is selected
+	useEffect(() => {
+		setFontSize(defaultFontSize);
+	}, [emotePreset]);
 
 	return (
 		<div className='option-container'>

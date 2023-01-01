@@ -6,7 +6,7 @@ import FontOption from './CustomizationOptions/FontOption';
 import TextOption from './CustomizationOptions/TextOption';
 import FontSizeOption from './CustomizationOptions/FontSizeOption';
 import ColorOption from './CustomizationOptions/ColorOption';
-import { EmoteModifiers, EMOTE_DEFAULTS, EmotePresets } from '../EmoteAssets';
+import { EmoteModifiers, EMOTE_DEFAULTS, EmotePresets, getEmoteFromParams } from '../EmoteAssets';
 
 const animationConfig: AnimationProps['config'] = {
 	mass: 1,
@@ -18,20 +18,21 @@ interface Props {
 	currentSelection: string | null;
 	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
 }
+function getEmoteType(emote: EmotePresets): 'text' | 'image' {
+	if (emote === 'lurk' || emote === 'PeepoSign') {
+		return 'text';
+	}
+	return 'image';
+}
 
 export default function CustomizationPanel(props: Props) {
 	// TODO: Change this to be dynamic
 	const { currentSelection, setEmoteModifiers } = props;
 	const panelRef = useRef<HTMLDivElement>(null);
-	const { emotePreset } = useParams();
-	const currentEmote: EmotePresets = (emotePreset as 'lurk') || 'PepegaSign';
+	const { emotePreset = 'lurk' } = useParams();
+	const currentEmote = getEmoteFromParams(emotePreset);
+	const emoteType = getEmoteType(currentEmote);
 
-	let emoteType = 'text';
-	if (currentEmote === 'lurk') {
-		emoteType = 'text';
-	} else if (currentEmote === 'PepegaSign') {
-		emoteType = 'image';
-	}
 	const whenEmoteSelected = {
 		to: { top: currentSelection === 'emotes' ? '-35%' : '25%' },
 		delay: currentSelection === 'emotes' ? 0 : 50,
@@ -54,17 +55,22 @@ export default function CustomizationPanel(props: Props) {
 			ref={panelRef}
 			className='customization-panel panel'>
 			<h1>Customization</h1>
+
 			{emoteType === 'text' ? (
 				<>
 					<TextOption setEmoteModifiers={setEmoteModifiers} />
 					<FontOption
 						setEmoteModifiers={setEmoteModifiers}
-						defaultFont={EMOTE_DEFAULTS[currentEmote].font}
+						defaultFont={{
+							fontName: EMOTE_DEFAULTS[currentEmote].font.name,
+							fontValue: EMOTE_DEFAULTS[currentEmote].font.value,
+						}}
 					/>
 					<FontSizeOption
 						setEmoteModifiers={setEmoteModifiers}
-						defaultFontSize={EMOTE_DEFAULTS[currentEmote].fontSize}
+						defaultFontSize={EMOTE_DEFAULTS[currentEmote].font.size}
 					/>
+					{/* TODO: Add default color */}
 					<ColorOption setEmoteModifiers={setEmoteModifiers} />
 				</>
 			) : (

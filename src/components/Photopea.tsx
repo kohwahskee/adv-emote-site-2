@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { getEmoteFromParams } from './EmoteAssets';
 /**
  * Includes functions to modify emote in Photopea
  * @module EmoteModifier
@@ -17,19 +19,31 @@ interface Props {
 export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) {
 	const photopeaRef = useRef<HTMLIFrameElement>(null);
 	const oldEmoteModifiers = useRef<EmoteAssets.EmoteModifiers>(emoteModifiers);
+	const { emotePreset = 'lurk' } = useParams();
+
+	const currentPreset = getEmoteFromParams(emotePreset);
 
 	function initOnComplete() {
 		EmoteAction.getEmoteURL(
 			photopeaRef.current as HTMLIFrameElement,
 			'png',
-			'lurk',
+			currentPreset,
 			emoteModifiers.text
 		).then((url) => {
 			setEmotePreviewURL(url);
 		});
 	}
 
-	// Debounce updateEmote function to prevent request spamming (2 seconds delay);
+	useEffect(() => {
+		EmoteAction.closeCurrentDocument(photopeaRef.current?.contentWindow as Window);
+		EmoteAction.photopeaInit(
+			photopeaRef.current as HTMLIFrameElement,
+			EmoteAssets.EMOTE_DEFAULTS[currentPreset].psd,
+			initOnComplete,
+			false
+		);
+	}, [emotePreset]);
+	// Debounce updateEmote function to prevent request spamming;
 	useEffect(() => {
 		const debouncer = setTimeout(() => {
 			EmoteAction.updateEmote(
@@ -38,10 +52,11 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 				photopeaRef.current?.contentWindow as Window
 			);
 
+			//  TODO: Change format and name to be dynamic
 			EmoteAction.getEmoteURL(
 				photopeaRef.current as HTMLIFrameElement,
 				'png',
-				'lurk',
+				emotePreset,
 				emoteModifiers.text
 			).then((url) => {
 				setEmotePreviewURL(url);

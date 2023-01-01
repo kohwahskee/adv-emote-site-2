@@ -64,21 +64,32 @@ function setEmoteText(photopeaWindow: PhotopeaWindow, textLayer: string, newText
 function updateEmote(
 	oldModifiers: EmoteAssets.EmoteModifiers,
 	newModifiers: EmoteAssets.EmoteModifiers,
-	photopeaWindow: Window
+	photopeaWindow: Window,
+	textLayer = 'TEXT_HERE'
 ) {
 	// if (!photopeaRef.current?.contentWindow) return;
 	// Compare old and new modifiers, update emote with EmoteModifier methods if there are changes
 	if (oldModifiers.text !== newModifiers.text) {
-		setEmoteText(photopeaWindow, 'user', newModifiers.text);
+		setEmoteText(photopeaWindow, textLayer, newModifiers.text);
 	}
 	if (oldModifiers.font !== newModifiers.font) {
-		setFont(photopeaWindow, 'user', newModifiers.font);
+		setFont(photopeaWindow, textLayer, newModifiers.font);
 	}
 	if (oldModifiers.color !== newModifiers.color) {
-		setFontColor(photopeaWindow, 'user', newModifiers.color);
+		setFontColor(photopeaWindow, textLayer, newModifiers.color);
 	}
 	if (oldModifiers.fontSize !== newModifiers.fontSize) {
-		setFontSize(photopeaWindow, 'user', newModifiers.fontSize);
+		setFontSize(photopeaWindow, textLayer, newModifiers.fontSize);
+	}
+}
+
+/**
+ * Close current document
+ * @remarks This usually happens when user changes emote, basically resets Photopea to a clean state
+ */
+function closeCurrentDocument(photopeaWindow: PhotopeaWindow) {
+	if (photopeaWindow) {
+		photopeaWindow.postMessage(`app.activeDocument.close();`, '*');
 	}
 }
 
@@ -88,11 +99,11 @@ function updateEmote(
 function photopeaInit(
 	photopeaNode: HTMLIFrameElement,
 	psdBuffer: ArrayBuffer,
-	callBackWhenFinish?: () => void
+	callBackWhenFinish?: () => void,
+	loadFont = true
 ) {
 	// TODO: Load all fonts when initializing Photopea
-	// 4 messages are sent when Photopea finishes loading psd and fonts
-	const fontList = [
+	let fontList = [
 		EmoteAssets.retroFontBuffer,
 		EmoteAssets.handWrittingFontBuffer,
 		EmoteAssets.chalkFontBuffer,
@@ -102,10 +113,10 @@ function photopeaInit(
 		EmoteAssets.comicBoldFontBuffer,
 		EmoteAssets.comicItalicFontBuffer,
 	];
+	// If loadFont is false, don't load any fonts
+	if (!loadFont) fontList = [];
+
 	const photopeaWindow = photopeaNode.contentWindow;
-	// const loadFont = `app.open("${fontURL}")`;
-	// const loadImage = `app.open("${fileURL}", false)`;
-	// const fontValueList = Object.values(EmoteAssets.fontMap);
 	const READY_COUNT_ON_LOAD = 1 + fontList.length;
 
 	let messageCount = 0;
@@ -117,13 +128,12 @@ function photopeaInit(
 			// When finishes loading psd and fonts, call callback function
 			callBackWhenFinish?.();
 		}
-		console.log(messageCount);
+		// console.log(messageCount);
 	});
 
 	fontList.forEach((buffer) => {
 		photopeaWindow?.postMessage(buffer, '*');
 	});
-	// photopeaWindow?.postMessage(EmoteAssets.handWrittingFontBuffer, '*');
 	// load images increase count by 3
 	photopeaWindow?.postMessage(psdBuffer, '*');
 }
@@ -191,4 +201,5 @@ export {
 	updateEmote,
 	photopeaInit,
 	getEmoteURL,
+	closeCurrentDocument,
 };
