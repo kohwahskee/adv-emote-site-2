@@ -2,7 +2,7 @@ import { SketchPicker, ColorResult } from 'react-color';
 import React, { useEffect, useState, MouseEvent } from 'react';
 import { animated, AnimationProps, useSpring } from '@react-spring/web';
 import ColorIcon from '../../../assets/icon-color.svg';
-import { EmoteModifiers } from '../../EmoteAssets';
+import { EmoteModifiers } from '../../Helpers/EmoteAssets';
 
 const animationConfig: AnimationProps['config'] = {
 	mass: 1,

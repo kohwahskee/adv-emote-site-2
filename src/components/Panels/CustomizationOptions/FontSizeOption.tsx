@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, useEffect, MouseEvent } from 'react';
 import { animated, AnimationProps, useSpring } from '@react-spring/web';
 import { useParams } from 'react-router-dom';
 import FontSizeIcon from '../../../assets/icon-font-size.svg';
-import { EmoteModifiers } from '../../EmoteAssets';
+import { EmoteModifiers } from '../../Helpers/EmoteAssets';
 
 const inputAnimationConfig: AnimationProps['config'] = {
 	mass: 0.3,

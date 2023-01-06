@@ -76,7 +76,7 @@ function generateSelectionLinks() {
 		'lurk',
 		'PeepoSign',
 		'PeepoSignAnimated',
-		'lurk',
+		'PepegaSign',
 		'lurk',
 		'lurk',
 		'lurk',

@@ -2,7 +2,7 @@ import { animated, useSpring, AnimationProps } from '@react-spring/web';
 import React, { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import FontIcon from '../../../assets/icon-font.svg';
-import { EmoteModifiers, fontMap } from '../../EmoteAssets';
+import { EmoteModifiers, fontMap } from '../../Helpers/EmoteAssets';
 
 interface FontItem {
 	fontName: string;
