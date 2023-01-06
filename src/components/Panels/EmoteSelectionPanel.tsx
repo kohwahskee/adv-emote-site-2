@@ -10,64 +10,6 @@ interface Props {
 	currentSelection: string | null;
 }
 
-function generateSelectionLinks() {
-	const emoteSelections = ['lurk', 'PeepoSign', 'lurk', 'lurk', 'lurk', 'lurk', 'lurk'];
-	// const emoteSelections = ['lurk', 'sign', 'signA', 'PepegaSign', 'PETTHE', 'peepoFlag', 'signB'];
-	const numOfRows = 5;
-	const minIconInRow = 2;
-	const midRow = Math.round(numOfRows / 2);
-	let currIndex = 0;
-	const rowList = [];
-
-	function getRow(numIcons: number, startIndex: number) {
-		const iconList = [];
-		for (let i = 0; i < numIcons; i++) {
-			iconList.push(
-				<Link
-					onMouseDown={(e) => e.preventDefault()}
-					className='emote-selection'
-					to={`/emote/${emoteSelections[startIndex + i]}`}
-				/>
-			);
-		}
-
-		return <div className='icon-row'>{iconList.map((icon) => icon)}</div>;
-	}
-
-	for (let i = minIconInRow; i <= midRow; i++) {
-		rowList.push(getRow(i, currIndex));
-		currIndex += i;
-	}
-	for (let i = numOfRows; i >= midRow + minIconInRow; i--) {
-		rowList.push(getRow(i - midRow - 1, currIndex));
-		currIndex += i - midRow - 1;
-	}
-
-	return <>{rowList.map((row) => row)}</>;
-}
-
-let iconsContainerRef: React.RefObject<HTMLDivElement>;
-let iconList: Element[] = [];
-
-function useScaleIconOnDrag(
-	containerPos: { top: number; left: number },
-	controller: SpringRef<Lookup<any>>
-) {
-	useEffect(() => {
-		controller.start({
-			to: containerPos,
-			config: {
-				mass: 1,
-				tension: 700,
-				friction: 20,
-			},
-			onChange: () => {
-				scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
-			},
-		});
-	}, [containerPos]);
-}
-
 export default function EmoteSelectionPanel(props: Props) {
 	iconsContainerRef = useRef<HTMLDivElement>(null);
 	const [containerPos, setContainerPos] = useState({ top: 0, left: 0 });
@@ -127,4 +69,70 @@ export default function EmoteSelectionPanel(props: Props) {
 			<h5>Click and drag to browse</h5>
 		</animated.div>
 	);
+}
+
+function generateSelectionLinks() {
+	const emoteSelections = [
+		'lurk',
+		'PeepoSign',
+		'PeepoSignAnimated',
+		'lurk',
+		'lurk',
+		'lurk',
+		'lurk',
+	];
+	// const emoteSelections = ['lurk', 'sign', 'signA', 'PepegaSign', 'PETTHE', 'peepoFlag', 'signB'];
+	const numOfRows = 5;
+	const minIconInRow = 2;
+	const midRow = Math.round(numOfRows / 2);
+	let currIndex = 0;
+	const rowList = [];
+
+	function getRow(numIcons: number, startIndex: number) {
+		const iconList = [];
+		for (let i = 0; i < numIcons; i++) {
+			iconList.push(
+				<Link
+					onMouseDown={(e) => e.preventDefault()}
+					className='emote-selection'
+					to={`/emote/${emoteSelections[startIndex + i]}`}
+				/>
+			);
+		}
+
+		return <div className='icon-row'>{iconList.map((icon) => icon)}</div>;
+	}
+
+	for (let i = minIconInRow; i <= midRow; i++) {
+		rowList.push(getRow(i, currIndex));
+		currIndex += i;
+	}
+	for (let i = numOfRows; i >= midRow + minIconInRow; i--) {
+		rowList.push(getRow(i - midRow - 1, currIndex));
+		currIndex += i - midRow - 1;
+	}
+
+	return <>{rowList.map((row) => row)}</>;
+}
+
+let iconsContainerRef: React.RefObject<HTMLDivElement>;
+let iconList: Element[] = [];
+
+function useScaleIconOnDrag(
+	containerPos: { top: number; left: number },
+	controller: SpringRef<Lookup<unknown>>
+) {
+	useEffect(() => {
+		controller.start({
+			to: containerPos,
+			config: {
+				mass: 1,
+				tension: 700,
+				friction: 20,
+			},
+			onChange: () => {
+				scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
+			},
+		});
+	}, [containerPos]);
 }

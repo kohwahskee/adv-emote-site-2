@@ -85,6 +85,8 @@ function getEmoteFromParams(param: string) {
 			return 'lurk';
 		case 'PeepoSign':
 			return 'PeepoSign';
+		case 'PeepoSignAnimated':
+			return 'PeepoSignAnimated';
 		default:
 			return 'lurk';
 	}
@@ -93,6 +95,8 @@ function getEmoteFromParams(param: string) {
 const EMOTE_DEFAULTS = {
 	lurk: {
 		psd: lurkPSDBuffer,
+		type: 'text',
+		exportFormat: 'png',
 		font: {
 			name: 'Comic Italic',
 			value: 'ComicSansMS-Italic',
@@ -102,6 +106,8 @@ const EMOTE_DEFAULTS = {
 	},
 	PeepoSign: {
 		psd: peepoSignPSDBuffer,
+		type: 'text',
+		exportFormat: 'png',
 		font: {
 			name: 'Comic Regular',
 			value: 'ComicSansMS',
@@ -109,11 +115,15 @@ const EMOTE_DEFAULTS = {
 			color: '#3c1e14',
 		},
 	},
-	PepegaSign: {
+	PeepoSignAnimated: {
+		psd: peepoSignAnimatedPSDBuffer,
+		type: 'text',
+		exportFormat: 'gif',
 		font: {
-			name: 'Comic Italic',
-			value: 'ComicSansMS-Italic',
-			size: 111,
+			name: 'Comic Regular',
+			value: 'ComicSansMS',
+			size: 108,
+			color: '#3c1e14',
 		},
 	},
 };
@@ -126,7 +136,7 @@ type EmoteModifiers = {
 };
 
 // type EmotePresets = 'lurk' | 'sign' | 'signA' | 'clapSign' | 'pepeHazmat' | 'PET' | 'pepegaSign';
-type EmotePresets = 'lurk' | 'PeepoSign';
+type EmotePresets = 'lurk' | 'PeepoSign' | 'PeepoSignAnimated';
 
 // Helpers
 export { fontMap, EMOTE_DEFAULTS, getEmoteFromParams };

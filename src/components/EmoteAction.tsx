@@ -1,32 +1,30 @@
-/**
- * Includes functions to modify emote in Photopea
- */
 /* eslint-disable no-console */
 import * as EmoteAssets from './EmoteAssets';
+// eslint-disable-next-line import/no-unresolved
+import ScriptTemplate from './scriptTemplate?url';
+
+const scriptTemplate = await (await fetch(ScriptTemplate)).text();
+console.log(scriptTemplate);
 
 type PhotopeaWindow = HTMLIFrameElement['contentWindow'];
 
 function setFont(photopeaWindow: PhotopeaWindow, textLayer: string, fontName: string) {
 	if (!photopeaWindow) return;
 
-	photopeaWindow.postMessage(
-		`
-  var layerList = app.activeDocument.layers; var textLayer = '${textLayer}'; function emoteAction(layer) { layer.textItem.font = '${fontName}'; } for (var x = 0; x <= layerList.length - 1; x++) { if (layerList[x].name === textLayer) { emoteAction(layerList[x]); } if (layerList[x].layers) { for (var y = 0; y <= layerList[x].layers.length - 1; y++) { if (layerList[x].layers[y].name === textLayer) { emoteAction(layerList[x].layers[y]); } } } }
-  `,
-		'*'
-	);
+	const script = `modifyLayers('${textLayer}', setFont, '${fontName}');`;
+	const concatScript = `${scriptTemplate} ${script}`;
+
+	photopeaWindow.postMessage(concatScript, '*');
 	console.log(`Changed font to ${fontName} on layer ${textLayer}`);
 }
 
 function setFontSize(photopeaWindow: PhotopeaWindow, textLayer: string, fontSizeInPixel: number) {
 	if (!photopeaWindow) return;
 
-	photopeaWindow.postMessage(
-		`
-  var layerList = app.activeDocument.layers; var textLayer = '${textLayer}'; function emoteAction(layer) { layer.textItem.size = new UnitValue(${fontSizeInPixel}, px); } for (var x = 0; x <= layerList.length - 1; x++) { if (layerList[x].name === textLayer) { emoteAction(layerList[x]); } if (layerList[x].layers) { for (var y = 0; y <= layerList[x].layers.length - 1; y++) { if (layerList[x].layers[y].name === textLayer) { emoteAction(layerList[x].layers[y]); } } } }
-  `,
-		'*'
-	);
+	const script = `modifyLayers('${textLayer}', setFontSize, '${fontSizeInPixel}');`;
+	const concatScript = `${scriptTemplate} ${script}`;
+
+	photopeaWindow.postMessage(concatScript, '*');
 
 	console.log(`Changed font size to ${fontSizeInPixel} on layer ${textLayer}`);
 }
@@ -34,12 +32,10 @@ function setFontSize(photopeaWindow: PhotopeaWindow, textLayer: string, fontSize
 function setFontColor(photopeaWindow: PhotopeaWindow, textLayer: string, fontColor: string) {
 	if (!photopeaWindow) return;
 
-	photopeaWindow.postMessage(
-		`
-  var layerList = app.activeDocument.layers; var textLayer = '${textLayer}'; function emoteAction(layer) { var newColor = new SolidColor(); newColor.rgb.hexValue = '${fontColor}'; layer.textItem.color = newColor; } for (var x = 0; x <= layerList.length - 1; x++) { if (layerList[x].name === textLayer) { emoteAction(layerList[x]); } if (layerList[x].layers) { for (var y = 0; y <= layerList[x].layers.length - 1; y++) { if (layerList[x].layers[y].name === textLayer) { emoteAction(layerList[x].layers[y]); } } } }
-  `,
-		'*'
-	);
+	const script = `modifyLayers('${textLayer}', setFontColor, '${fontColor}');`;
+	const concatScript = `${scriptTemplate} ${script}`;
+
+	photopeaWindow.postMessage(concatScript, '*');
 
 	console.log(`Changed font color to ${fontColor} on layer ${textLayer}`);
 }
@@ -47,12 +43,10 @@ function setFontColor(photopeaWindow: PhotopeaWindow, textLayer: string, fontCol
 function setEmoteText(photopeaWindow: PhotopeaWindow, textLayer: string, newText: string) {
 	if (!photopeaWindow) return;
 
-	photopeaWindow.postMessage(
-		`
-    var layerList = app.activeDocument.layers; var textLayer = '${textLayer}'; function emoteAction(layer) { layer.textItem.contents = '${newText}'; } for (var x = 0; x <= layerList.length - 1; x++) { if (layerList[x].name === textLayer) { emoteAction(layerList[x]); } if (layerList[x].layers) { for (var y = 0; y <= layerList[x].layers.length - 1; y++) { if (layerList[x].layers[y].name === textLayer) { emoteAction(layerList[x].layers[y]); } } } }
-  `,
-		'*'
-	);
+	const script = `modifyLayers('${textLayer}', setText, '${newText}');`;
+	const concatScript = `${scriptTemplate} ${script}`;
+
+	photopeaWindow.postMessage(concatScript, '*');
 
 	console.log(`Changed text to ${newText} on layer ${textLayer}`);
 }

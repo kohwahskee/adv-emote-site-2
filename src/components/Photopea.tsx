@@ -9,7 +9,7 @@ import * as EmoteAction from './EmoteAction';
 import * as EmoteAssets from './EmoteAssets';
 
 // Delay for debounce function
-const UPDATE_DELAY_IN_MS = 100;
+const UPDATE_DELAY_IN_MS = 300;
 
 interface Props {
 	emoteModifiers: EmoteAssets.EmoteModifiers;
@@ -20,8 +20,8 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 	const photopeaRef = useRef<HTMLIFrameElement>(null);
 	const oldEmoteModifiers = useRef<EmoteAssets.EmoteModifiers>(emoteModifiers);
 	const { emotePreset = 'lurk' } = useParams();
-
 	const currentPreset = getEmoteFromParams(emotePreset);
+	const { exportFormat, psd } = EmoteAssets.EMOTE_DEFAULTS[currentPreset];
 
 	function initOnComplete() {
 		EmoteAction.getEmoteURL(
@@ -36,13 +36,9 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 
 	useEffect(() => {
 		EmoteAction.closeCurrentDocument(photopeaRef.current?.contentWindow as Window);
-		EmoteAction.photopeaInit(
-			photopeaRef.current as HTMLIFrameElement,
-			EmoteAssets.EMOTE_DEFAULTS[currentPreset].psd,
-			initOnComplete,
-			false
-		);
+		EmoteAction.photopeaInit(photopeaRef.current as HTMLIFrameElement, psd, initOnComplete, false);
 	}, [emotePreset]);
+
 	// Debounce updateEmote function to prevent request spamming;
 	useEffect(() => {
 		const debouncer = setTimeout(() => {
@@ -55,7 +51,7 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 			//  TODO: Change format and name to be dynamic
 			EmoteAction.getEmoteURL(
 				photopeaRef.current as HTMLIFrameElement,
-				'png',
+				exportFormat,
 				emotePreset,
 				emoteModifiers.text
 			).then((url) => {
@@ -73,11 +69,7 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 	return (
 		<iframe
 			onLoad={() => {
-				EmoteAction.photopeaInit(
-					photopeaRef.current as HTMLIFrameElement,
-					EmoteAssets.lurkPSDBuffer,
-					initOnComplete
-				);
+				EmoteAction.photopeaInit(photopeaRef.current as HTMLIFrameElement, psd, initOnComplete);
 			}}
 			ref={photopeaRef}
 			title='Photopea'

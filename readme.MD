@@ -15,3 +15,4 @@ HOWTO: WHEN ADDING NEW EMOTE PRESETS:
 1. EMOTE_DEFAULTS in EmoteAssets
 2. emoteSelections[] in EmoteSelectionPanel
 3. update list from getEmoteFromParams() in Photopea
+4. type EmotePresets in EmoteAssets
