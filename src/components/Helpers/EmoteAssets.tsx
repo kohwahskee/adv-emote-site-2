@@ -52,7 +52,7 @@ type Emote_Defaults = Record<
 		type: 'text' | 'image';
 		scriptTemplate: string;
 		exportFormat: 'png' | 'gif';
-		font?: {
+		font: {
 			name: string;
 			value: string;
 			size: number;

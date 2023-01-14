@@ -3,6 +3,7 @@ import * as EmoteAssets from './EmoteAssets';
 // eslint-disable-next-line import/no-unresolved
 let scriptTemplate: string;
 type PhotopeaWindow = HTMLIFrameElement['contentWindow'];
+let oldEmote: string;
 
 function setFont(photopeaWindow: PhotopeaWindow, textLayer: string, fontName: string) {
 	if (!photopeaWindow) return;
@@ -85,29 +86,31 @@ async function photopeaInit(
 	callBackWhenFinish?: () => void,
 	loadFont = true
 ) {
+	const photopeaWindow = photopeaNode.contentWindow;
+	const fontBufferList: ArrayBuffer[] = [];
+	if (loadFont) {
+		fontBufferList.push(
+			await EmoteAssets.retroFontBuffer,
+			await EmoteAssets.handWrittingFontBuffer,
+			await EmoteAssets.chalkFontBuffer,
+			await EmoteAssets.handwritting2FontBuffer,
+			await EmoteAssets.scifiFontBuffer,
+			await EmoteAssets.comicFontBuffer,
+			await EmoteAssets.comicBoldFontBuffer,
+			await EmoteAssets.comicItalicFontBuffer
+		);
+		fontBufferList.forEach((buffer) => {
+			photopeaWindow?.postMessage(buffer, '*');
+		});
+	}
+	if (oldEmote === currentEmote) return;
+	oldEmote = currentEmote;
 	const psdBuffer = await EmoteAssets.EMOTE_DEFAULTS[currentEmote].psd;
-	console.log(psdBuffer);
-	console.log('init');
-
 	scriptTemplate = await (
 		await fetch(EmoteAssets.EMOTE_DEFAULTS[currentEmote].scriptTemplate)
 	).text();
 	// TODO: Load all fonts when initializing Photopea
-	const fontList = [
-		await EmoteAssets.retroFontBuffer,
-		await EmoteAssets.handWrittingFontBuffer,
-		await EmoteAssets.chalkFontBuffer,
-		await EmoteAssets.handwritting2FontBuffer,
-		await EmoteAssets.scifiFontBuffer,
-		await EmoteAssets.comicFontBuffer,
-		await EmoteAssets.comicBoldFontBuffer,
-		await EmoteAssets.comicItalicFontBuffer,
-	];
-	// If loadFont is false, don't load any fonts
-
-	const photopeaWindow = photopeaNode.contentWindow;
-	const READY_COUNT_ON_LOAD = 1 + fontList.length;
-
+	const READY_COUNT_ON_LOAD = 1 + fontBufferList.length;
 	let messageCount = 0;
 
 	window.addEventListener('message', (e) => {
@@ -117,14 +120,8 @@ async function photopeaInit(
 			// When finishes loading psd and fonts, call callback function
 			callBackWhenFinish?.();
 		}
-		// console.log(messageCount);
 	});
 
-	if (loadFont) {
-		fontList.forEach((buffer) => {
-			photopeaWindow?.postMessage(buffer, '*');
-		});
-	}
 	// load images increase count by 3
 	photopeaWindow?.postMessage(psdBuffer, '*');
 }

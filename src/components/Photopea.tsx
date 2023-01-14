@@ -34,7 +34,6 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 	}
 
 	useEffect(() => {
-		console.log(emotePreset);
 		EmoteAction.closeCurrentDocument(photopeaRef.current?.contentWindow as Window);
 		EmoteAction.photopeaInit(
 			photopeaRef.current as HTMLIFrameElement,
@@ -73,8 +72,8 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 
 	return (
 		<iframe
-			onLoad={() => {
-				EmoteAction.photopeaInit(
+			onLoad={async () => {
+				await EmoteAction.photopeaInit(
 					photopeaRef.current as HTMLIFrameElement,
 					currentPreset,
 					initOnComplete
