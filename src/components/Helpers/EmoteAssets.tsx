@@ -1,75 +1,7 @@
 /* eslint-disable import/no-unresolved */
-import {
-	HandwrittingFont,
-	RetroFont,
-	ChalkFont,
-	Handwritting2Font,
-	ScifiFont,
-	ComicBoldFont,
-	ComicFont,
-	ComicItalicFont,
-} from '../../assets/fonts/Font';
-import {
-	LurkPSD,
-	PeepoSignPSD,
-	PeepoSignAnimatedPSD,
-	PepegaSignPSD,
-	ClapSignPSD,
-	PepeHazmatPSD,
-	PETPSD,
-} from '../../assets/emotes/Emotes';
-
+import fontBufferPromises from '../../assets/fonts/Font';
+import emoteBufferPromises from '../../assets/emotes/Emotes';
 import { GenericTextTemplate, PepegaSignTemplate } from './PhotoshopScriptTemplates/Templates';
-
-// fetch every font and convert each one to an array buffer
-const fontImportList = [
-	HandwrittingFont,
-	RetroFont,
-	ChalkFont,
-	Handwritting2Font,
-	ScifiFont,
-	ComicFont,
-	ComicBoldFont,
-	ComicItalicFont,
-];
-const emoteImportList = [
-	LurkPSD,
-	PeepoSignPSD,
-	PeepoSignAnimatedPSD,
-	PepegaSignPSD,
-	ClapSignPSD,
-	PepeHazmatPSD,
-	PETPSD,
-];
-
-const fontArrayBufferList = await Promise.all(
-	(await Promise.all(fontImportList.map((font) => fetch(font)))).map((font) => font.arrayBuffer())
-);
-const emoteArrayBufferList = await Promise.all(
-	(
-		await Promise.all(emoteImportList.map((emote) => fetch(emote)))
-	).map((emote) => emote.arrayBuffer())
-);
-
-const [
-	handWrittingFontBuffer,
-	retroFontBuffer,
-	chalkFontBuffer,
-	handwritting2FontBuffer,
-	scifiFontBuffer,
-	comicFontBuffer,
-	comicBoldFontBuffer,
-	comicItalicFontBuffer,
-] = fontArrayBufferList;
-const [
-	lurkPSDBuffer,
-	peepoSignPSDBuffer,
-	peepoSignAnimatedPSDBuffer,
-	pepegaSignPSDBuffer,
-	clapSignPSDBuffer,
-	pepeHazmatPSDBuffer,
-	PETPSDBuffer,
-] = emoteArrayBufferList;
 
 const fontMap = {
 	Handwritting: 'Sigs',
@@ -97,9 +29,41 @@ function getEmoteFromParams(param: string) {
 	}
 }
 
-const EMOTE_DEFAULTS = {
+// Promise order:
+// 0: Lurk
+// 1: PeepoSign
+// 2: PeepoSignAnimated
+// 3: PepegaSign
+// 4: ClapSign
+// 5: PepeHazmat
+// 6: PET
+const lurkBuffer = (async () => (await emoteBufferPromises)[0])();
+const peepoSignBuffer = (async () => (await emoteBufferPromises)[1])();
+const peepoSignAnimatedBuffer = (async () => (await emoteBufferPromises)[2])();
+const pepegaSignBuffer = (async () => (await emoteBufferPromises)[3])();
+// const clapSignBuffer = (async () => (await emoteBufferPromises)[4])();
+// const pepeHazmatBuffer = (async () => (await emoteBufferPromises)[5])();
+// const petBuffer = (async () => (await emoteBufferPromises)[6])();
+
+type Emote_Defaults = Record<
+	string,
+	{
+		psd: Promise<ArrayBuffer>;
+		type: 'text' | 'image';
+		scriptTemplate: string;
+		exportFormat: 'png' | 'gif';
+		font?: {
+			name: string;
+			value: string;
+			size: number;
+			color: string;
+		};
+	}
+>;
+
+const EMOTE_DEFAULTS: Emote_Defaults = {
 	lurk: {
-		psd: lurkPSDBuffer,
+		psd: lurkBuffer,
 		type: 'text',
 		scriptTemplate: GenericTextTemplate,
 		exportFormat: 'png',
@@ -111,7 +75,7 @@ const EMOTE_DEFAULTS = {
 		},
 	},
 	PeepoSign: {
-		psd: peepoSignPSDBuffer,
+		psd: peepoSignBuffer,
 		type: 'text',
 		scriptTemplate: GenericTextTemplate,
 		exportFormat: 'png',
@@ -123,7 +87,7 @@ const EMOTE_DEFAULTS = {
 		},
 	},
 	PeepoSignAnimated: {
-		psd: peepoSignAnimatedPSDBuffer,
+		psd: peepoSignAnimatedBuffer,
 		type: 'text',
 		scriptTemplate: GenericTextTemplate,
 		exportFormat: 'gif',
@@ -135,7 +99,7 @@ const EMOTE_DEFAULTS = {
 		},
 	},
 	PepegaSign: {
-		psd: pepegaSignPSDBuffer,
+		psd: pepegaSignBuffer,
 		type: 'text',
 		scriptTemplate: PepegaSignTemplate,
 		exportFormat: 'gif',
@@ -154,22 +118,29 @@ type EmoteModifiers = {
 	font: string;
 	fontSize: number;
 };
+// Font order:
+// 0: Comic
+// 1: Comic Bold
+// 2: Comic Italic
+// 3: Handwritting
+// 4: Handwritting 2
+// 5: Retro
+// 6: Doodle
+// 7: Sci-fi
+const comicFontBuffer = (async () => (await fontBufferPromises)[0])();
+const comicBoldFontBuffer = (async () => (await fontBufferPromises)[1])();
+const comicItalicFontBuffer = (async () => (await fontBufferPromises)[2])();
+const handWrittingFontBuffer = (async () => (await fontBufferPromises)[3])();
+const handwritting2FontBuffer = (async () => (await fontBufferPromises)[4])();
+const retroFontBuffer = (async () => (await fontBufferPromises)[5])();
+const chalkFontBuffer = (async () => (await fontBufferPromises)[6])();
+const scifiFontBuffer = (async () => (await fontBufferPromises)[7])();
 
 // type EmotePresets = 'lurk' | 'sign' | 'signA' | 'clapSign' | 'pepeHazmat' | 'PET' | 'pepegaSign';
 type EmotePresets = 'lurk' | 'PeepoSign' | 'PeepoSignAnimated' | 'PepegaSign';
 
 // Helpers
 export { fontMap, EMOTE_DEFAULTS, getEmoteFromParams };
-
-export {
-	lurkPSDBuffer,
-	peepoSignPSDBuffer,
-	peepoSignAnimatedPSDBuffer,
-	clapSignPSDBuffer,
-	pepeHazmatPSDBuffer,
-	PETPSDBuffer,
-	pepegaSignPSDBuffer,
-};
 
 // shared fonts
 export {

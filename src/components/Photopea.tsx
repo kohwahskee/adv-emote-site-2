@@ -8,15 +8,14 @@ import { getEmoteFromParams } from './Helpers/EmoteAssets';
 import * as EmoteAction from './Helpers/EmoteAction';
 import * as EmoteAssets from './Helpers/EmoteAssets';
 
-// Delay for debounce function
-const UPDATE_DELAY_IN_MS = 300;
-
 interface Props {
 	emoteModifiers: EmoteAssets.EmoteModifiers;
 	setEmotePreviewURL: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) {
+	// Delay for debounce function
+	const UPDATE_DELAY_IN_MS = 300;
 	const photopeaRef = useRef<HTMLIFrameElement>(null);
 	const oldEmoteModifiers = useRef<EmoteAssets.EmoteModifiers>(emoteModifiers);
 	const { emotePreset = 'lurk' } = useParams();
@@ -35,6 +34,7 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 	}
 
 	useEffect(() => {
+		console.log(emotePreset);
 		EmoteAction.closeCurrentDocument(photopeaRef.current?.contentWindow as Window);
 		EmoteAction.photopeaInit(
 			photopeaRef.current as HTMLIFrameElement,
@@ -42,7 +42,7 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 			initOnComplete,
 			false
 		);
-	}, [emotePreset]);
+	}, [currentPreset]);
 
 	// Debounce updateEmote function to prevent request spamming;
 	useEffect(() => {

@@ -15,6 +15,22 @@ import ComicFont from './comic.ttf?url';
 import ComicBoldFont from './comicbd.ttf?url';
 import ComicItalicFont from './comici.ttf?url';
 
-export { ComicFont, ComicBoldFont, ComicItalicFont };
+const fontImportList = [
+	ComicFont,
+	ComicBoldFont,
+	ComicItalicFont,
+	HandwrittingFont,
+	Handwritting2Font,
+	RetroFont,
+	ChalkFont,
+	ScifiFont,
+];
 
-export { HandwrittingFont, RetroFont, ChalkFont, Handwritting2Font, ScifiFont };
+const fontBufferPromises = Promise.all(
+	fontImportList.map(async (font) => {
+		const res = await fetch(font);
+		return res.arrayBuffer();
+	})
+);
+
+export default fontBufferPromises;

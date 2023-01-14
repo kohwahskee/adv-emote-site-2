@@ -85,23 +85,25 @@ async function photopeaInit(
 	callBackWhenFinish?: () => void,
 	loadFont = true
 ) {
-	const psdBuffer = EmoteAssets.EMOTE_DEFAULTS[currentEmote].psd;
+	const psdBuffer = await EmoteAssets.EMOTE_DEFAULTS[currentEmote].psd;
+	console.log(psdBuffer);
+	console.log('init');
+
 	scriptTemplate = await (
 		await fetch(EmoteAssets.EMOTE_DEFAULTS[currentEmote].scriptTemplate)
 	).text();
 	// TODO: Load all fonts when initializing Photopea
-	let fontList = [
-		EmoteAssets.retroFontBuffer,
-		EmoteAssets.handWrittingFontBuffer,
-		EmoteAssets.chalkFontBuffer,
-		EmoteAssets.handwritting2FontBuffer,
-		EmoteAssets.scifiFontBuffer,
-		EmoteAssets.comicFontBuffer,
-		EmoteAssets.comicBoldFontBuffer,
-		EmoteAssets.comicItalicFontBuffer,
+	const fontList = [
+		await EmoteAssets.retroFontBuffer,
+		await EmoteAssets.handWrittingFontBuffer,
+		await EmoteAssets.chalkFontBuffer,
+		await EmoteAssets.handwritting2FontBuffer,
+		await EmoteAssets.scifiFontBuffer,
+		await EmoteAssets.comicFontBuffer,
+		await EmoteAssets.comicBoldFontBuffer,
+		await EmoteAssets.comicItalicFontBuffer,
 	];
 	// If loadFont is false, don't load any fonts
-	if (!loadFont) fontList = [];
 
 	const photopeaWindow = photopeaNode.contentWindow;
 	const READY_COUNT_ON_LOAD = 1 + fontList.length;
@@ -118,9 +120,11 @@ async function photopeaInit(
 		// console.log(messageCount);
 	});
 
-	fontList.forEach((buffer) => {
-		photopeaWindow?.postMessage(buffer, '*');
-	});
+	if (loadFont) {
+		fontList.forEach((buffer) => {
+			photopeaWindow?.postMessage(buffer, '*');
+		});
+	}
 	// load images increase count by 3
 	photopeaWindow?.postMessage(psdBuffer, '*');
 }
@@ -145,6 +149,7 @@ function getEmoteURL(
 		photopeaWindow.postMessage(save, '*');
 		let imgFile: File = new File([''], '', { type: 'image/png' });
 		let imageURL: string;
+
 		function windowListenerId(event: MessageEvent) {
 			if (!(event.data instanceof ArrayBuffer)) return;
 			const rawData = event.data;
