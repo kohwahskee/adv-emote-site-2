@@ -2,7 +2,7 @@
 import '../../css/Style-EmoteSelection.scss';
 import { animated, AnimationProps, SpringRef, useSpring } from '@react-spring/web';
 import { Link } from 'react-router-dom';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Lookup } from '@react-spring/types';
 import { v4 as uuidv4 } from 'uuid';
 import scaleToFit from '../ScaleToFit';
@@ -16,7 +16,9 @@ interface Props {
 
 export default function EmoteSelectionPanel(props: Props) {
 	iconsContainerRef = useRef<HTMLDivElement>(null);
+	const [isDragging, setIsDragging] = useState(false);
 	const [containerPos, setContainerPos] = useState({ top: 0, left: 0 });
+	const generatedSelections = useMemo(() => generateSelectionLinks(), []);
 	const { currentSelection } = props;
 
 	const panelAnimationConfig: AnimationProps['config'] = {
@@ -33,14 +35,16 @@ export default function EmoteSelectionPanel(props: Props) {
 	const [dragNThrowAnimation, dragNThrowController] = useSpring(() => {});
 
 	function dragging(e: MouseEvent) {
-		e.preventDefault();
+		// e.stopPropagation();
 		// Move icon according to mouse movement
 		setContainerPos((prevPos) => ({
 			top: prevPos.top + e.movementY,
 			left: prevPos.left + e.movementX,
 		}));
+		setIsDragging(true);
 	}
 	function dragEnd() {
+		setIsDragging(false);
 		document.removeEventListener('mousemove', dragging);
 	}
 	function dragStart() {
@@ -61,13 +65,14 @@ export default function EmoteSelectionPanel(props: Props) {
 			className='emote-selection-panel panel'>
 			<h1>Emotes</h1>
 			<div
+				data-isdragging={isDragging}
 				ref={iconsContainerRef}
 				onMouseDown={dragStart}
 				className='emote-selections-container'>
 				<animated.div
 					className='icons-wrapper'
 					style={dragNThrowAnimation}>
-					{generateSelectionLinks()}
+					{generatedSelections}
 				</animated.div>
 			</div>
 			<h5>Click and drag to browse</h5>
@@ -77,13 +82,13 @@ export default function EmoteSelectionPanel(props: Props) {
 
 function generateSelectionLinks() {
 	const emoteSelections = [
-		{ name: 'lurk', thumbnail: LurkThumbnail },
-		{ name: 'PeepoSign', thumbnail: PeepoSignThumbnail },
-		{ name: 'PeepoSignAnimated', thumbnail: PeepoSignThumbnail },
-		{ name: 'PepegaSign', thumbnail: PepegaSignThumbnail },
-		{ name: 'lurk', thumbnail: LurkThumbnail },
-		{ name: 'lurk', thumbnail: LurkThumbnail },
-		{ name: 'lurk', thumbnail: LurkThumbnail },
+		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
+		{ name: 'PeepoSign', thumbnail: PeepoSignThumbnail, isAnimated: false },
+		{ name: 'PeepoSignAnimated', thumbnail: PeepoSignThumbnail, isAnimated: true },
+		{ name: 'PepegaSign', thumbnail: PepegaSignThumbnail, isAnimated: true },
+		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
+		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
+		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
 	];
 	// const emoteSelections = ['lurk', 'sign', 'signA', 'PepegaSign', 'PETTHE', 'peepoFlag', 'signB'];
 	const numOfRows = 5;
@@ -95,20 +100,45 @@ function generateSelectionLinks() {
 	function getRow(numIcons: number, startIndex: number) {
 		const iconList = [];
 		for (let i = 0; i < numIcons; i++) {
+			// [<link> , thumbnailURL]
+			const { name, thumbnail, isAnimated } = emoteSelections[startIndex + i];
 			iconList.push(
 				<Link
-					onMouseDown={(e) => e.preventDefault()}
-					className='emote-selection'
-					key={uuidv4()}
-					to={`/emote/${emoteSelections[startIndex + i].name}`}
+					onMouseDown={(e) => {
+						e.preventDefault();
+						e.currentTarget.setAttribute('data-mousepos', [e.clientX, e.clientY].toString());
+					}}
+					onMouseUp={(e) => {
+						const mousePos = e.currentTarget
+							.getAttribute('data-mousepos')
+							?.split(',')
+							.map((x) => parseInt(x, 10));
+						if (mousePos && mousePos[0] === e.clientX && mousePos[1] === e.clientY) {
+							e.currentTarget.setAttribute('data-isdragging', 'false');
+						} else {
+							e.currentTarget.setAttribute('data-isdragging', 'true');
+						}
+					}}
+					onClick={(e) => {
+						// e.preventDefault();
+						if (e.currentTarget.getAttribute('data-isdragging') === 'true') {
+							e.preventDefault();
+						}
+					}}
+					className={`emote-selection ${isAnimated ? 'animated' : ''}`}
+					key={`${uuidv4()}`}
+					style={{
+						backgroundImage: `url(${thumbnail})`,
+					}}
+					to={`/emote/${name}`}
 				/>
 			);
 		}
 
 		return (
 			<div
-				className='icon-row'
-				key={uuidv4()}>
+				key={`${uuidv4()}`}
+				className='icon-row'>
 				{iconList.map((icon) => icon)}
 			</div>
 		);

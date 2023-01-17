@@ -4,12 +4,12 @@ NOTE:
 
 TODO:
 
-0. Restructure code so when new emote is added, only have to change from one source
-1. Fix CSS to work on all browsers
-2. Look into performance problems with animations on low-end config
+1. Restructure code so when new emote is added, only have to change from one source
+2. Fix CSS to work on all browsers
+3. Look into performance problems with animations on low-end config
    2.1 Try will-change
-3. Look into Rive/Canvas blurred animation issue
-4. Reset customizations when different emote preset is selected
+4. Fix clicking issue so user doesn't accidentally select emote while dragging
+5. Add dragging boundary (selection bounces back if out of bound)
 
 HOWTO: WHEN ADDING NEW EMOTE PRESETS:
 
