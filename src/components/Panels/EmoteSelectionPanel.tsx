@@ -4,7 +4,11 @@ import { animated, AnimationProps, SpringRef, useSpring } from '@react-spring/we
 import { Link } from 'react-router-dom';
 import React, { useEffect, useRef, useState } from 'react';
 import { Lookup } from '@react-spring/types';
+import { v4 as uuidv4 } from 'uuid';
 import scaleToFit from '../ScaleToFit';
+import LurkThumbnail from '../../assets/emote-thumbnails/lurk-thumbnail.png';
+import PeepoSignThumbnail from '../../assets/emote-thumbnails/peepoSign-thumbnail.png';
+import PepegaSignThumbnail from '../../assets/emote-thumbnails/pepegaSign-thumbnail.png';
 
 interface Props {
 	currentSelection: string | null;
@@ -73,13 +77,13 @@ export default function EmoteSelectionPanel(props: Props) {
 
 function generateSelectionLinks() {
 	const emoteSelections = [
-		'lurk',
-		'PeepoSign',
-		'PeepoSignAnimated',
-		'PepegaSign',
-		'lurk',
-		'lurk',
-		'lurk',
+		{ name: 'lurk', thumbnail: LurkThumbnail },
+		{ name: 'PeepoSign', thumbnail: PeepoSignThumbnail },
+		{ name: 'PeepoSignAnimated', thumbnail: PeepoSignThumbnail },
+		{ name: 'PepegaSign', thumbnail: PepegaSignThumbnail },
+		{ name: 'lurk', thumbnail: LurkThumbnail },
+		{ name: 'lurk', thumbnail: LurkThumbnail },
+		{ name: 'lurk', thumbnail: LurkThumbnail },
 	];
 	// const emoteSelections = ['lurk', 'sign', 'signA', 'PepegaSign', 'PETTHE', 'peepoFlag', 'signB'];
 	const numOfRows = 5;
@@ -95,12 +99,19 @@ function generateSelectionLinks() {
 				<Link
 					onMouseDown={(e) => e.preventDefault()}
 					className='emote-selection'
-					to={`/emote/${emoteSelections[startIndex + i]}`}
+					key={uuidv4()}
+					to={`/emote/${emoteSelections[startIndex + i].name}`}
 				/>
 			);
 		}
 
-		return <div className='icon-row'>{iconList.map((icon) => icon)}</div>;
+		return (
+			<div
+				className='icon-row'
+				key={uuidv4()}>
+				{iconList.map((icon) => icon)}
+			</div>
+		);
 	}
 
 	for (let i = minIconInRow; i <= midRow; i++) {
