@@ -29,6 +29,8 @@
 .icons-wrapper {
   position: absolute;
   display: flex;
+  width: fit-content;
+  height: fit-content;
   flex-direction: column;
   justify-content: center;
   align-items: center;

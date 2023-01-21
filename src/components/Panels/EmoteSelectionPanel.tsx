@@ -10,16 +10,19 @@ import scaleToFit from '../Helpers/ScaleToFit';
 import LurkThumbnail from '../../assets/emote-thumbnails/lurk-thumbnail.png';
 import PeepoSignThumbnail from '../../assets/emote-thumbnails/peepoSign-thumbnail.png';
 import PepegaSignThumbnail from '../../assets/emote-thumbnails/pepegaSign-thumbnail.png';
+import fitBoundInCanvas from '../Helpers/fitCanvasInBound';
 
 interface Props {
 	currentSelection: string | null;
 }
 
 export default function EmoteSelectionPanel(props: Props) {
+	const parentContainerRef = useRef<HTMLDivElement>(null);
 	const iconsContainerRef = useRef<HTMLDivElement>(null);
+	const iconListRef = useRef<Element[]>([]);
+
 	const [containerPos, setContainerPos] = useState({ top: 0, left: 0 });
 	const generatedSelections = useMemo(() => generateSelectionLinks(), []);
-	const iconListRef = useRef<Element[]>([]);
 	const { currentSelection } = props;
 	const panelSpringConfig = {
 		to: { top: currentSelection === 'emotes' ? '25%' : '90%' },
@@ -42,6 +45,11 @@ export default function EmoteSelectionPanel(props: Props) {
 		}));
 	}
 	function dragEnd() {
+		fitBoundInCanvas(
+			iconsContainerRef.current as HTMLElement,
+			parentContainerRef.current as HTMLElement,
+			setContainerPos
+		);
 		document.removeEventListener('mousemove', dragging);
 	}
 	function dragStart() {
@@ -51,10 +59,10 @@ export default function EmoteSelectionPanel(props: Props) {
 
 	useEffect(() => {
 		iconListRef.current = Array.from(document.getElementsByClassName('emote-selection'));
-		scaleToFit(iconsContainerRef.current as HTMLElement, iconListRef.current as HTMLElement[]);
+		scaleToFit(parentContainerRef.current as HTMLElement, iconListRef.current as HTMLElement[]);
 	}, []);
 
-	useScaleIconOnDrag(containerPos, dragNThrowController, iconsContainerRef, iconListRef.current);
+	useScaleIconOnDrag(containerPos, dragNThrowController, parentContainerRef, iconListRef.current);
 
 	return (
 		<animated.div
@@ -62,10 +70,11 @@ export default function EmoteSelectionPanel(props: Props) {
 			className='emote-selection-panel panel'>
 			<h1>Emotes</h1>
 			<div
-				ref={iconsContainerRef}
+				ref={parentContainerRef}
 				onMouseDown={dragStart}
 				className='emote-selections-container'>
 				<animated.div
+					ref={iconsContainerRef}
 					className='icons-wrapper'
 					style={dragNThrowAnimation}>
 					{generatedSelections}
@@ -86,9 +95,9 @@ function useScaleIconOnDrag(
 		controller.start({
 			to: containerPos,
 			config: {
-				mass: 1,
-				tension: 700,
-				friction: 20,
+				mass: 0.5,
+				tension: 500,
+				friction: 40,
 			},
 			onChange: () => {
 				scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
