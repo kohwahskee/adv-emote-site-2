@@ -9,15 +9,17 @@
   height: 60vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   left: 2%;
 
   h1 {
-    height: 30vh;
-    writing-mode: sideways-lr;
+    height: fit-content;
+    width: fit-content;
+    writing-mode: vertical-lr;
+    transform: scale(-100%, -100%);
     color: white;
     font-family: 'Jua', sans-serif;
     font-weight: 600;

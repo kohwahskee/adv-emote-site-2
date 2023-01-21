@@ -13,7 +13,7 @@ export default function scaleToFit(parentContainer: HTMLElement, iconList: HTMLE
 			y: iconBound.top + iconBound.height / 2,
 		};
 
-		function iconScale(
+		function getIconScale(
 			baseParentBound: number,
 			baseIconBound: number,
 			scaleDirection: 'up' | 'down'
@@ -51,28 +51,28 @@ export default function scaleToFit(parentContainer: HTMLElement, iconList: HTMLE
 			let verticalScale;
 
 			if (shouldLeftScale) {
-				horizontalScale = iconScale(
+				horizontalScale = getIconScale(
 					parentBounds.left,
 					iconBound.left,
 					iconBound.left < parentBounds.left ? 'down' : 'up'
 				);
 			}
 			if (shouldTopScale) {
-				verticalScale = iconScale(
+				verticalScale = getIconScale(
 					parentBounds.top,
 					iconBound.top,
 					iconBound.top < parentBounds.top ? 'down' : 'up'
 				);
 			}
 			if (shouldRightScale) {
-				horizontalScale = iconScale(
+				horizontalScale = getIconScale(
 					parentBounds.right,
 					iconBound.right,
 					iconBound.right > parentBounds.right ? 'down' : 'up'
 				);
 			}
 			if (shouldBottomScale) {
-				verticalScale = iconScale(
+				verticalScale = getIconScale(
 					parentBounds.bottom,
 					iconBound.bottom,
 					iconBound.bottom > parentBounds.bottom ? 'down' : 'up'

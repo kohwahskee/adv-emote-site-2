@@ -2,7 +2,7 @@ import '../../css/Style-Preview.scss';
 import { useRive, Fit, Layout, Alignment } from '@rive-app/react-canvas';
 import PreviewPlaceholder from '../../assets/preview-placeholder.gif';
 // eslint-disable-next-line import/no-unresolved
-import RiveDownloadButton from '../../assets/rive_download_button.riv?url';
+import RiveDownloadButton from '../../assets/download-button(1).riv?url';
 // import Rive from '@rive-app/canvas/rive_advanced.mjs';
 
 interface Props {
@@ -33,23 +33,23 @@ export default function PreviewPanel({ emotePreviewURL }: Props) {
 						className='generated-emote'
 					/>
 				</div>
-				<a
-					href={emotePreviewURL}
+				<div
+					onClick={() => {
+						window.open(emotePreviewURL, '_blank');
+					}}
 					id='download'
-					download='emote'>
-					<RiveComponent
-						style={{
-							// width: '90%',
-							height: '6em',
-							cursor: 'pointer',
-						}}
-						width={200}
-						onLoad={() => {
-							rive?.resizeDrawingSurfaceToCanvas();
-						}}
-					/>
-				</a>
+				/>
 			</div>
+			<RiveComponent
+				style={{
+					// width: '90%',
+					position: 'absolute',
+					inset: 0,
+				}}
+				onLoad={() => {
+					rive?.resizeDrawingSurfaceToCanvas();
+				}}
+			/>
 		</div>
 	);
 }

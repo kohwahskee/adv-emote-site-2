@@ -5,11 +5,11 @@ NOTE:
 TODO:
 
 1. Restructure code so when new emote is added, only have to change from one source
-2. Fix CSS to work on all browsers
-3. Look into performance problems with animations on low-end config
-   2.1 Try will-change
-4. Fix clicking issue so user doesn't accidentally select emote while dragging
-5. Add dragging boundary (selection bounces back if out of bound)
+2. Look into performance problems with animations on low-end config
+   2.1 Try will-change (Tested -> doesn't help much) ✅
+3. Add dragging boundary (selection bounces back if out of bound)
+4. Emote not loaded when picked from homepage
+5. Try hard coding emote links instead of using generateSelectionLinks()
 
 HOWTO: WHEN ADDING NEW EMOTE PRESETS:
 

@@ -1,11 +1,12 @@
 /* eslint-disable no-loop-func */
 import '../../css/Style-EmoteSelection.scss';
-import { animated, AnimationProps, SpringRef, useSpring } from '@react-spring/web';
+import { animated, SpringRef, useSpring } from '@react-spring/web';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Lookup } from '@react-spring/types';
 import { v4 as uuidv4 } from 'uuid';
-import scaleToFit from '../ScaleToFit';
+import scaleToFit from '../Helpers/ScaleToFit';
+// import fitBoundInCanvas from '../Helpers/fitCanvasInBound';
 import LurkThumbnail from '../../assets/emote-thumbnails/lurk-thumbnail.png';
 import PeepoSignThumbnail from '../../assets/emote-thumbnails/peepoSign-thumbnail.png';
 import PepegaSignThumbnail from '../../assets/emote-thumbnails/pepegaSign-thumbnail.png';
@@ -15,21 +16,19 @@ interface Props {
 }
 
 export default function EmoteSelectionPanel(props: Props) {
-	iconsContainerRef = useRef<HTMLDivElement>(null);
-	const [isDragging, setIsDragging] = useState(false);
+	const iconsContainerRef = useRef<HTMLDivElement>(null);
 	const [containerPos, setContainerPos] = useState({ top: 0, left: 0 });
 	const generatedSelections = useMemo(() => generateSelectionLinks(), []);
+	const iconListRef = useRef<Element[]>([]);
 	const { currentSelection } = props;
-
-	const panelAnimationConfig: AnimationProps['config'] = {
-		mass: 1,
-		tension: 385,
-		friction: 20,
-	};
 	const panelSpringConfig = {
 		to: { top: currentSelection === 'emotes' ? '25%' : '90%' },
 		delay: currentSelection === 'emotes' ? 50 : 0,
-		config: panelAnimationConfig,
+		config: {
+			mass: 1,
+			tension: 385,
+			friction: 20,
+		},
 	};
 	const panelStyleWhenSelected = useSpring(panelSpringConfig);
 	const [dragNThrowAnimation, dragNThrowController] = useSpring(() => {});
@@ -41,10 +40,8 @@ export default function EmoteSelectionPanel(props: Props) {
 			top: prevPos.top + e.movementY,
 			left: prevPos.left + e.movementX,
 		}));
-		setIsDragging(true);
 	}
 	function dragEnd() {
-		setIsDragging(false);
 		document.removeEventListener('mousemove', dragging);
 	}
 	function dragStart() {
@@ -53,11 +50,11 @@ export default function EmoteSelectionPanel(props: Props) {
 	}
 
 	useEffect(() => {
-		scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
-		iconList = Array.from(document.getElementsByClassName('emote-selection'));
+		iconListRef.current = Array.from(document.getElementsByClassName('emote-selection'));
+		scaleToFit(iconsContainerRef.current as HTMLElement, iconListRef.current as HTMLElement[]);
 	}, []);
 
-	useScaleIconOnDrag(containerPos, dragNThrowController);
+	useScaleIconOnDrag(containerPos, dragNThrowController, iconsContainerRef, iconListRef.current);
 
 	return (
 		<animated.div
@@ -65,7 +62,6 @@ export default function EmoteSelectionPanel(props: Props) {
 			className='emote-selection-panel panel'>
 			<h1>Emotes</h1>
 			<div
-				data-isdragging={isDragging}
 				ref={iconsContainerRef}
 				onMouseDown={dragStart}
 				className='emote-selections-container'>
@@ -80,6 +76,26 @@ export default function EmoteSelectionPanel(props: Props) {
 	);
 }
 
+function useScaleIconOnDrag(
+	containerPos: { top: number; left: number },
+	controller: SpringRef<Lookup<unknown>>,
+	iconsContainerRef: React.RefObject<HTMLDivElement>,
+	iconList: Element[]
+) {
+	useEffect(() => {
+		controller.start({
+			to: containerPos,
+			config: {
+				mass: 1,
+				tension: 700,
+				friction: 20,
+			},
+			onChange: () => {
+				scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
+			},
+		});
+	}, [containerPos]);
+}
 function generateSelectionLinks() {
 	const emoteSelections = [
 		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
@@ -154,26 +170,4 @@ function generateSelectionLinks() {
 	}
 
 	return <>{rowList.map((row) => row)}</>;
-}
-
-let iconsContainerRef: React.RefObject<HTMLDivElement>;
-let iconList: Element[] = [];
-
-function useScaleIconOnDrag(
-	containerPos: { top: number; left: number },
-	controller: SpringRef<Lookup<unknown>>
-) {
-	useEffect(() => {
-		controller.start({
-			to: containerPos,
-			config: {
-				mass: 1,
-				tension: 700,
-				friction: 20,
-			},
-			onChange: () => {
-				scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
-			},
-		});
-	}, [containerPos]);
 }

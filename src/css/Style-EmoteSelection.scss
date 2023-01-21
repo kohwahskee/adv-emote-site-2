@@ -34,6 +34,7 @@
   align-items: center;
   inset: 0;
   user-select: none;
+  will-change: top, left;
 }
 
 .emote-selection {
@@ -45,6 +46,7 @@
   margin: .1em .5em;
   border-radius: 100%;
   background-color: var(--color-black-40);
+  will-change: width
 }
 
 .emote-selection-panel {

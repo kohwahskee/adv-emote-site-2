@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import CustomizationPanel from './Panels/CustomizationPanel';
 import PreviewPanel from './Panels/PreviewPanel';
 import EmoteSelectionPanel from './Panels/EmoteSelectionPanel';
@@ -8,7 +8,10 @@ import Photopea from './Photopea';
 
 export default function App() {
 	// Selection state (either "customization" or "emotes")
-	const [selectionState, setSelectionState] = useState<'emotes' | 'customization'>('customization');
+	const currentPath = useLocation().pathname;
+	const [selectionState, setSelectionState] = useState<'emotes' | 'customization'>(
+		currentPath === '/' ? 'emotes' : 'customization'
+	);
 	const [emoteModifers, setEmoteModifiers] = useState({
 		text: '',
 		color: '#f00',
@@ -26,7 +29,7 @@ export default function App() {
 			<Route
 				path='/emote/:emotePreset'
 				element={
-					<div>
+					<>
 						<PanelSelection
 							selectionOnclickHandler={onSelectionChange}
 							currentSelection={selectionState}
@@ -41,7 +44,19 @@ export default function App() {
 							setEmotePreviewURL={setEmotePreviewURL}
 							emoteModifiers={emoteModifers}
 						/>
-					</div>
+					</>
+				}
+			/>
+			<Route
+				index
+				element={
+					<>
+						<PanelSelection
+							selectionOnclickHandler={onSelectionChange}
+							currentSelection={selectionState}
+						/>
+						<EmoteSelectionPanel currentSelection={selectionState} />
+					</>
 				}
 			/>
 		</Routes>

@@ -49,6 +49,7 @@
 		"no-unused-vars": "off",
 		"@typescript-eslint/no-unused-vars": ["error"],
 		"prefer-destructuring": "warn",
-		"no-use-before-define": "off"
+		"no-use-before-define": "off",
+		"no-param-reassign": ["error", { "props": false }]
 	}
 }

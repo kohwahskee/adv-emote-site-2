@@ -25,13 +25,13 @@ export default function PanelSelection(props: Props) {
 		function animateSelectionOnClick() {
 			if (event.currentTarget.getAttribute('selection-value') === 'emotes') {
 				emoteAnimationController.start({
-					from: { translateY: '0%' },
+					from: { translateY: '0%', scale: '-1, -1' },
 					to: [{ translateY: '-5%' }, { translateY: '0%' }],
 					config: animationConfig,
 				});
 			} else if (event.currentTarget.getAttribute('selection-value') === 'customization') {
 				customizationAnimationController.start({
-					from: { translateY: '0%' },
+					from: { translateY: '0%', scale: '-1, -1' },
 					to: [{ translateY: '5%' }, { translateY: '0%' }],
 					config: animationConfig,
 				});
