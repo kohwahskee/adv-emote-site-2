@@ -71,9 +71,12 @@ function updateEmote(
  * Close current document
  * @remarks This usually happens when user changes emote, basically resets Photopea to a clean state
  */
-function closeCurrentDocument(photopeaWindow: PhotopeaWindow) {
+function closeAllDocuments(photopeaWindow: PhotopeaWindow) {
 	if (photopeaWindow) {
-		photopeaWindow.postMessage(`app.activeDocument.close();`, '*');
+		photopeaWindow.postMessage(
+			`function closeDocument() { if (app.documents.length == 0) return; app.activeDocument.close(); closeDocument(); } closeDocument();`,
+			'*'
+		);
 	}
 }
 
@@ -109,7 +112,6 @@ async function photopeaInit(
 	scriptTemplate = await (
 		await fetch(EmoteAssets.EMOTE_DEFAULTS[currentEmote].scriptTemplate)
 	).text();
-	// TODO: Load all fonts when initializing Photopea
 	const READY_COUNT_ON_LOAD = 1 + fontBufferList.length;
 	let messageCount = 0;
 
@@ -190,5 +192,5 @@ export {
 	updateEmote,
 	photopeaInit,
 	getEmoteURL,
-	closeCurrentDocument,
+	closeAllDocuments as closeCurrentDocument,
 };

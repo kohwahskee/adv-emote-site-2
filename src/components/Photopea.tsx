@@ -15,12 +15,12 @@ interface Props {
 
 export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) {
 	// Delay for debounce function
-	const UPDATE_DELAY_IN_MS = 300;
 	const photopeaRef = useRef<HTMLIFrameElement>(null);
 	const oldEmoteModifiers = useRef<EmoteAssets.EmoteModifiers>(emoteModifiers);
 	const { emotePreset = 'lurk' } = useParams();
 	const currentPreset = getEmoteFromParams(emotePreset);
 	const { exportFormat } = EmoteAssets.EMOTE_DEFAULTS[currentPreset];
+	const UPDATE_DELAY_IN_MS = EmoteAssets.EMOTE_DEFAULTS[currentPreset].updateDelay;
 
 	function initOnComplete() {
 		EmoteAction.getEmoteURL(

@@ -51,6 +51,7 @@ type Emote_Defaults = Record<
 		psd: Promise<ArrayBuffer>;
 		type: 'text' | 'image';
 		scriptTemplate: string;
+		updateDelay: number;
 		exportFormat: 'png' | 'gif';
 		font: {
 			name: string;
@@ -66,6 +67,7 @@ const EMOTE_DEFAULTS: Emote_Defaults = {
 		psd: lurkBuffer,
 		type: 'text',
 		scriptTemplate: GenericTextTemplate,
+		updateDelay: 100,
 		exportFormat: 'png',
 		font: {
 			name: 'Comic Italic',
@@ -78,6 +80,7 @@ const EMOTE_DEFAULTS: Emote_Defaults = {
 		psd: peepoSignBuffer,
 		type: 'text',
 		scriptTemplate: GenericTextTemplate,
+		updateDelay: 100,
 		exportFormat: 'png',
 		font: {
 			name: 'Comic Regular',
@@ -90,6 +93,7 @@ const EMOTE_DEFAULTS: Emote_Defaults = {
 		psd: peepoSignAnimatedBuffer,
 		type: 'text',
 		scriptTemplate: GenericTextTemplate,
+		updateDelay: 300,
 		exportFormat: 'gif',
 		font: {
 			name: 'Comic Regular',
@@ -102,6 +106,7 @@ const EMOTE_DEFAULTS: Emote_Defaults = {
 		psd: pepegaSignBuffer,
 		type: 'text',
 		scriptTemplate: PepegaSignTemplate,
+		updateDelay: 500,
 		exportFormat: 'gif',
 		font: {
 			name: 'Comic Regular',

@@ -10,4 +10,8 @@ export default defineConfig({
 			plugins: [autoprefixer({})],
 		},
 	},
+	build: {
+		outDir: './docs',
+	},
+	base: './',
 });
