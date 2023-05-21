@@ -18,10 +18,13 @@ const animationConfig: AnimationProps['config'] = {
 export default function PanelSelection(props: Props) {
 	const { currentSelection, selectionOnclickHandler } = props;
 	const [emoteOnClickAnimation, emoteAnimationController] = useSpring(() => {});
-	const [customizationOnClickAnimation, customizationAnimationController] = useSpring(() => {});
+	const [customizationOnClickAnimation, customizationAnimationController] =
+		useSpring(() => {});
 
 	const selectionHandler = (event: MouseEvent) => {
-		selectionOnclickHandler(event.currentTarget.getAttribute('selection-value') as PanelType);
+		selectionOnclickHandler(
+			event.currentTarget.getAttribute('selection-value') as PanelType
+		);
 		function animateSelectionOnClick() {
 			if (event.currentTarget.getAttribute('selection-value') === 'emotes') {
 				emoteAnimationController.start({
@@ -29,7 +32,9 @@ export default function PanelSelection(props: Props) {
 					to: [{ translateY: '-5%' }, { translateY: '0%' }],
 					config: animationConfig,
 				});
-			} else if (event.currentTarget.getAttribute('selection-value') === 'customization') {
+			} else if (
+				event.currentTarget.getAttribute('selection-value') === 'customization'
+			) {
 				customizationAnimationController.start({
 					from: { translateY: '0%', scale: '-1, -1' },
 					to: [{ translateY: '5%' }, { translateY: '0%' }],
@@ -43,11 +48,15 @@ export default function PanelSelection(props: Props) {
 	return (
 		<div
 			className={`panel-selection ${
-				currentSelection === 'customization' ? 'customization-selected' : 'emote-selected'
+				currentSelection === 'customization'
+					? 'customization-selected'
+					: 'emote-selected'
 			}`}>
 			<animated.h1
 				style={customizationOnClickAnimation}
-				className={currentSelection === 'customization' ? 'selection-active' : ''}
+				className={
+					currentSelection === 'customization' ? 'selection-active' : ''
+				}
 				selection-value='customization'
 				onClick={selectionHandler}>
 				CUSTOMIZATION

@@ -6,12 +6,17 @@ import FontOption from './CustomizationOptions/FontOption';
 import TextOption from './CustomizationOptions/TextOption';
 import FontSizeOption from './CustomizationOptions/FontSizeOption';
 import ColorOption from './CustomizationOptions/ColorOption';
-import { EmoteModifiers, EMOTE_DEFAULTS, getEmoteFromParams } from '../Helpers/EmoteAssets';
+import {
+	EmoteModifiers,
+	EMOTE_DEFAULTS,
+	getEmoteFromParams,
+} from '../Helpers/EmoteAssets';
 
 const animationConfig: AnimationProps['config'] = {
 	mass: 1,
 	tension: 385,
 	friction: 20,
+	round: 1,
 };
 
 interface Props {

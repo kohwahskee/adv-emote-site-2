@@ -29,6 +29,7 @@ export default function EmoteSelectionPanel(props: Props) {
 			tension: 385,
 			friction: 20,
 		},
+		round: 1,
 	};
 	const panelStyleWhenSelected = useSpring(panelSpringConfig);
 	const [dragNThrowAnimation, dragNThrowController] = useSpring(() => {});
@@ -55,11 +56,21 @@ export default function EmoteSelectionPanel(props: Props) {
 	}
 
 	useEffect(() => {
-		iconListRef.current = Array.from(document.getElementsByClassName('emote-selection'));
-		scaleToFit(parentContainerRef.current as HTMLElement, iconListRef.current as HTMLElement[]);
+		iconListRef.current = Array.from(
+			document.getElementsByClassName('emote-selection')
+		);
+		scaleToFit(
+			parentContainerRef.current as HTMLElement,
+			iconListRef.current as HTMLElement[]
+		);
 	}, []);
 
-	useScaleIconOnDrag(containerPos, dragNThrowController, parentContainerRef, iconListRef.current);
+	useScaleIconOnDrag(
+		containerPos,
+		dragNThrowController,
+		parentContainerRef,
+		iconListRef.current
+	);
 
 	return (
 		<animated.div
@@ -97,7 +108,10 @@ function useScaleIconOnDrag(
 				friction: 40,
 			},
 			onChange: () => {
-				scaleToFit(iconsContainerRef.current as HTMLElement, iconList as HTMLElement[]);
+				scaleToFit(
+					iconsContainerRef.current as HTMLElement,
+					iconList as HTMLElement[]
+				);
 			},
 		});
 	}, [containerPos]);

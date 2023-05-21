@@ -7,20 +7,24 @@ import { getEmoteFromParams } from './Helpers/EmoteAssets';
  */
 import * as EmoteAction from './Helpers/EmoteAction';
 import * as EmoteAssets from './Helpers/EmoteAssets';
-
+//
 interface Props {
 	emoteModifiers: EmoteAssets.EmoteModifiers;
 	setEmotePreviewURL: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) {
+export default function Photopea({
+	emoteModifiers,
+	setEmotePreviewURL,
+}: Props) {
 	// Delay for debounce function
 	const photopeaRef = useRef<HTMLIFrameElement>(null);
 	const oldEmoteModifiers = useRef<EmoteAssets.EmoteModifiers>(emoteModifiers);
 	const { emotePreset = 'lurk' } = useParams();
 	const currentPreset = getEmoteFromParams(emotePreset);
 	const { exportFormat } = EmoteAssets.EMOTE_DEFAULTS[currentPreset];
-	const UPDATE_DELAY_IN_MS = EmoteAssets.EMOTE_DEFAULTS[currentPreset].updateDelay;
+	const UPDATE_DELAY_IN_MS =
+		EmoteAssets.EMOTE_DEFAULTS[currentPreset].updateDelay;
 
 	function initOnComplete() {
 		EmoteAction.getEmoteURL(
@@ -34,7 +38,9 @@ export default function Photopea({ emoteModifiers, setEmotePreviewURL }: Props) 
 	}
 
 	useEffect(() => {
-		EmoteAction.closeCurrentDocument(photopeaRef.current?.contentWindow as Window);
+		EmoteAction.closeCurrentDocument(
+			photopeaRef.current?.contentWindow as Window
+		);
 		EmoteAction.photopeaInit(
 			photopeaRef.current as HTMLIFrameElement,
 			currentPreset,
