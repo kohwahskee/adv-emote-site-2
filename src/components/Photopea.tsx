@@ -29,7 +29,7 @@ export default function Photopea({
 	function initOnComplete() {
 		EmoteAction.getEmoteURL(
 			photopeaRef.current as HTMLIFrameElement,
-			'png',
+			exportFormat,
 			currentPreset,
 			emoteModifiers.text
 		).then((url) => {
