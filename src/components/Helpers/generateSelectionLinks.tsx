@@ -3,14 +3,19 @@ import { v4 as uuidv4 } from 'uuid';
 import LurkThumbnail from '../../assets/emote-thumbnails/lurk-thumbnail.png';
 import PeepoSignThumbnail from '../../assets/emote-thumbnails/peepoSign-thumbnail.png';
 import PepegaSignThumbnail from '../../assets/emote-thumbnails/pepegaSign-thumbnail.png';
+import KanaInsultThumbnail from '../../assets/emote-thumbnails/kanaInsult-thumbnail.png';
 
 export default function generateSelectionLinks() {
 	const emoteSelections = [
 		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
 		{ name: 'PeepoSign', thumbnail: PeepoSignThumbnail, isAnimated: false },
-		{ name: 'PeepoSignAnimated', thumbnail: PeepoSignThumbnail, isAnimated: true },
+		{
+			name: 'PeepoSignAnimated',
+			thumbnail: PeepoSignThumbnail,
+			isAnimated: true,
+		},
 		{ name: 'PepegaSign', thumbnail: PepegaSignThumbnail, isAnimated: true },
-		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
+		{ name: 'KanaInsult', thumbnail: KanaInsultThumbnail, isAnimated: true },
 		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
 		{ name: 'lurk', thumbnail: LurkThumbnail, isAnimated: false },
 	];
@@ -30,14 +35,21 @@ export default function generateSelectionLinks() {
 				<Link
 					onMouseDown={(e) => {
 						e.preventDefault();
-						e.currentTarget.setAttribute('data-mousepos', [e.clientX, e.clientY].toString());
+						e.currentTarget.setAttribute(
+							'data-mousepos',
+							[e.clientX, e.clientY].toString()
+						);
 					}}
 					onMouseUp={(e) => {
 						const mousePos = e.currentTarget
 							.getAttribute('data-mousepos')
 							?.split(',')
 							.map((x) => parseInt(x, 10));
-						if (mousePos && mousePos[0] === e.clientX && mousePos[1] === e.clientY) {
+						if (
+							mousePos &&
+							mousePos[0] === e.clientX &&
+							mousePos[1] === e.clientY
+						) {
 							e.currentTarget.setAttribute('data-isdragging', 'false');
 						} else {
 							e.currentTarget.setAttribute('data-isdragging', 'true');

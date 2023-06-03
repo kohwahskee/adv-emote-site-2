@@ -1,7 +1,10 @@
 /* eslint-disable import/no-unresolved */
 import fontBufferPromises from '../../assets/fonts/Font';
 import emoteBufferPromises from '../../assets/emotes/Emotes';
-import { GenericTextTemplate, PepegaSignTemplate } from './PhotoshopScriptTemplates/Templates';
+import {
+	GenericTextTemplate,
+	PepegaSignTemplate,
+} from './PhotoshopScriptTemplates/Templates';
 
 const fontMap = {
 	Handwritting: 'Sigs',
@@ -24,6 +27,8 @@ function getEmoteFromParams(param: string) {
 			return 'PeepoSignAnimated';
 		case 'PepegaSign':
 			return 'PepegaSign';
+		case 'KanaInsult':
+			return 'KanaInsult';
 		default:
 			return 'lurk';
 	}
@@ -44,6 +49,7 @@ const pepegaSignBuffer = (async () => (await emoteBufferPromises)[3])();
 // const clapSignBuffer = (async () => (await emoteBufferPromises)[4])();
 // const pepeHazmatBuffer = (async () => (await emoteBufferPromises)[5])();
 // const petBuffer = (async () => (await emoteBufferPromises)[6])();
+const kanaInsultBuffer = (async () => (await emoteBufferPromises)[7])();
 
 type Emote_Defaults = Record<
 	string,
@@ -115,6 +121,19 @@ const EMOTE_DEFAULTS: Emote_Defaults = {
 			color: '#000',
 		},
 	},
+	KanaInsult: {
+		psd: kanaInsultBuffer,
+		type: 'text',
+		scriptTemplate: PepegaSignTemplate,
+		updateDelay: 500,
+		exportFormat: 'gif',
+		font: {
+			name: 'Handwritting',
+			value: 'Sigs',
+			size: 111,
+			color: '#f36456',
+		},
+	},
 };
 
 type EmoteModifiers = {
@@ -141,8 +160,13 @@ const retroFontBuffer = (async () => (await fontBufferPromises)[5])();
 const chalkFontBuffer = (async () => (await fontBufferPromises)[6])();
 const scifiFontBuffer = (async () => (await fontBufferPromises)[7])();
 
-// type EmotePresets = 'lurk' | 'sign' | 'signA' | 'clapSign' | 'pepeHazmat' | 'PET' | 'pepegaSign';
-type EmotePresets = 'lurk' | 'PeepoSign' | 'PeepoSignAnimated' | 'PepegaSign';
+// type EmotePresets = 'lurk' | 'sign' | 'signA' | 'clapSign' | 'pepeHazmat' | 'PET' | 'pepegaSign' | 'kanaInsult';
+type EmotePresets =
+	| 'lurk'
+	| 'PeepoSign'
+	| 'PeepoSignAnimated'
+	| 'PepegaSign'
+	| 'KanaInsult';
 
 // Helpers
 export { fontMap, EMOTE_DEFAULTS, getEmoteFromParams };

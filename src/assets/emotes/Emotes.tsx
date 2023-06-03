@@ -8,6 +8,7 @@ import ClapSignPSD from './clapSign.psd?url';
 import PepeHazmatPSD from './pepeHazmat.psd?url';
 import PETPSD from './PETTHEEMOTE.psd?url';
 import PepegaSignPSD from './PepegaSign.psd?url';
+import KanaInsult from './KanaInsult.psd?url';
 
 const emoteImportList = [
 	LurkPSD,
@@ -17,6 +18,7 @@ const emoteImportList = [
 	ClapSignPSD,
 	PepeHazmatPSD,
 	PETPSD,
+	KanaInsult,
 ];
 
 const emoteBufferPromises = Promise.all(
