@@ -69,13 +69,18 @@ export default function CustomizationPanel(props: Props) {
 						setEmoteModifiers={setEmoteModifiers}
 						defaultFontSize={EMOTE_DEFAULTS[currentEmote].font.size}
 					/>
-					{/* TODO: Add default color */}
-					<ColorOption setEmoteModifiers={setEmoteModifiers} />
+					<ColorOption
+						defaultColor={EMOTE_DEFAULTS[currentEmote].font.color}
+						setEmoteModifiers={setEmoteModifiers}
+					/>
 				</>
 			) : (
 				<>
 					<TextOption setEmoteModifiers={setEmoteModifiers} />
-					<ColorOption setEmoteModifiers={setEmoteModifiers} />
+					<ColorOption
+						defaultColor={EMOTE_DEFAULTS[currentEmote].font.color}
+						setEmoteModifiers={setEmoteModifiers}
+					/>
 				</>
 			)}
 		</animated.div>
