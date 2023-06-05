@@ -4,7 +4,7 @@
   height: 20em;
   top: 90%;
   left: 15%;
-  z-index: -10000;
+  z-index: 1;
 }
 
 .emote-selections-container {
@@ -38,6 +38,7 @@
   inset: 0;
   user-select: none;
   will-change: top, left;
+  // z-index: -1000;
 }
 
 .emote-selection {
@@ -60,6 +61,7 @@
   display: flex;
   flex-direction: row;
   /* pointer-events: none; */
+
 }
 
 h5 {
