@@ -1,6 +1,7 @@
 import { SketchPicker, ColorResult } from 'react-color';
 import React, { useEffect, useState, MouseEvent } from 'react';
 import { animated, AnimationProps, useSpring } from '@react-spring/web';
+import { useParams } from 'react-router-dom';
 import ColorIcon from '../../../assets/icon-color.svg';
 import { EmoteModifiers } from '../../Helpers/EmoteAssets';
 
@@ -12,21 +13,29 @@ const animationConfig: AnimationProps['config'] = {
 
 interface Props {
 	setEmoteModifiers: React.Dispatch<React.SetStateAction<EmoteModifiers>>;
+	defaultColor: string;
 }
 
-export default function ColorOption({ setEmoteModifiers }: Props) {
-	const [color, setColor] = useState('#FFDE98');
+export default function ColorOption({
+	setEmoteModifiers,
+	defaultColor,
+}: Props) {
+	const [color, setColor] = useState(defaultColor || '#000000');
+	const { emotePreset } = useParams();
 	const [isFocused, setIsFocused] = useState<boolean>(false);
-	const [colorPickerAnimation, colorPickerAnimationController] = useSpring(() => ({
-		from: { scale: 1.1 },
-	}));
+	const [colorPickerAnimation, colorPickerAnimationController] = useSpring(
+		() => ({
+			from: { scale: 1.1 },
+		})
+	);
 	const onChangeHandler = (colorResult: ColorResult) => {
 		setColor(colorResult.hex);
 	};
 	const boxOnClickHandler = (e: MouseEvent) => {
 		e.stopPropagation();
 		setIsFocused(true);
-		const colorPicker: HTMLElement | null = document.querySelector('.sketch-picker');
+		const colorPicker: HTMLElement | null =
+			document.querySelector('.sketch-picker');
 
 		const colorPickerListenerId = (pickerEvent: Event) => {
 			// stopPropagation() prevents document listener from firing when user is still picking color
@@ -55,6 +64,10 @@ export default function ColorOption({ setEmoteModifiers }: Props) {
 		}
 	}, [isFocused]);
 
+	useEffect(() => {
+		setColor(defaultColor);
+	}, [emotePreset]);
+
 	return (
 		<div className='option-container'>
 			<div className='color-option option'>
@@ -69,7 +82,12 @@ export default function ColorOption({ setEmoteModifiers }: Props) {
 					className='color-picker-container'>
 					<SketchPicker
 						styles={{
-							default: { picker: { display: isFocused ? 'unset' : 'none', userSelect: 'none' } },
+							default: {
+								picker: {
+									display: isFocused ? 'unset' : 'none',
+									userSelect: 'none',
+								},
+							},
 						}}
 						width='10em'
 						disableAlpha
